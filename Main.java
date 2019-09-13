@@ -8,7 +8,7 @@ import javax.swing.*;
 public class Main extends JPanel implements ActionListener {
 	// The frame dimensions
 	static int frameWidth = 600;
-    static int frameHeight = 600;
+	static int frameHeight = 600;
     
     // The robot’s rotation
     static int rotation = 0;
