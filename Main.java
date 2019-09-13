@@ -60,18 +60,6 @@ public class Main extends JPanel implements ActionListener {
         if (points.length < 4 || points.length > 4) {
             System.err.println("Not enough integers");
         } else {
-            // Use Graphics2D to rotate the entire thing
-            // Graphics2D g2 = (Graphics2D)g;
-            // g2.rotate(Math.toRadians(45));
-            
-            // Rectangle r = new Rectangle(points[0], points[1], points[2], points[3]);
-            // Path2D.Double path = new Path2D.Double();
-            // path.append(r, false);
-            // AffineTransform t = new AffineTransform();
-            // t.rotate(Math.toRadians(45));
-            // path.transform(t);
-            // g.draw(path);
-            
             g.drawRect(points[0], points[1], points[2], points[3]);
         }
     }
