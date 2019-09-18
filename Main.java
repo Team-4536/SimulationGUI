@@ -7,8 +7,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public class Main extends JPanel implements ActionListener {
-	private static Main instance;
+public class SimulationGUI extends JPanel implements ActionListener {
+	private static SimulationGUI instance;
 	
 	// The frame dimensions
 	static int frameWidth = 600;
@@ -23,27 +23,27 @@ public class Main extends JPanel implements ActionListener {
 	// Create a timer for the refresh delay
 	Timer timer = new Timer(5, this);
 	
-	private Main() { timer.start(); }
+	public SimulationGUI() { timer.start(); }
 	
 	// Method for using USB Joysticks
-	public Main(double joystickX, double joystickY) {
+	public SimulationGUI(double joystickX, double joystickY) {
 		
 	}
 	
 	// Get instance
-	public static Main getInstance() {
+	public SimulationGUI getInstance() {
 		if (instance == null) { instance = new Main(); }
-        return instance;
+		return instance;
 	}
 	
 	// Use this to start drawing all the lines
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-        g.setColor(Color.blue);
-        
-        Graphics2D g2 = (Graphics2D)g;
-        
-        // Change the origin point
+		g.setColor(Color.blue);
+		
+		Graphics2D g2 = (Graphics2D)g;
+		
+		// Change the origin point
 		g2.translate(this.getWidth()/3 + 100, this.getHeight()/2); //105
 		
 		// rotate the graphics board
