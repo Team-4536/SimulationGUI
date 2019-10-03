@@ -5,21 +5,20 @@ Simulated bot visualization written in Java by Ridley Nelson.
 
 ### Requirements
 - You must include `simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}@zip"` in your build.gradle dependencies.
-- The official FRC Driver Station application.
-- (Visual Studio Code)[https://vscode.com] (or any other java/FRC compatible compiler).
-- FRC (LabView)[].
-- Executable robot code, here is a (template)[].
+- The official [](FRC Driver Station application).
+- [https://vscode.com](Visual Studio Code) (or any other java/FRC compatible compiler).
+- FRC [](LabView).
+- Executable robot code, here is a [](template).
 
 ## Installation Instructions
 
 ### Overview
 Depending on where your project is at, select one of the following links according to your needs.
 
-()[]
-()[]
-()[]
-()[]
-()[]
+[]()
+[]()
+[]()
+[]()
 
 ### Step 1
 
