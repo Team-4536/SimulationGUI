@@ -95,8 +95,7 @@ public class SimulationGUI {
     }
     
     public SimulationGUI(String windowTitle) throws IOException {
-        URL url = getClass().getResource("src\\main\\java\\org\\minutebots\\frc2019\\simulation\\robot.jpeg");
-        BufferedImage rawChasis = ImageIO.read(new File(url.getPath()));
+        BufferedImage rawChasis = ImageIO.read(new File("src\\main\\java\\org\\minutebots\\frc2019\\simulation\\robot.jpeg"));
         BufferedImage drivetrain = blurImageBorder(rawChasis, 1);
         
         frame = new JFrame(windowTitle);
