@@ -2,6 +2,9 @@ package org.minutebots.frc2019;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
+
+import java.io.IOException;
+
 import org.minutebots.frc2019.simulation.SimulationGUI;
 
 /**
@@ -18,7 +21,23 @@ public class Robot extends TimedRobot {
    */
 
   Joystick joystick = new Joystick(0);
-  SimulationGUI simulation = new SimulationGUI("4536 FRC SimulatorGUI");
+  SimulationGUI simulation;
+  int i = 0;
+
+  public boolean checkSim() {
+    if (simulation == null) {
+      try {
+        simulation = new SimulationGUI("4536 FRC SimulatorGUI");
+      } catch(IOException e) {
+        e.printStackTrace();
+      } catch(NullPointerException e) {
+        e.printStackTrace();
+      }
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   @Override
   public void robotInit() {
@@ -33,17 +52,25 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopInit() {    
-    simulation.getInstance();
-    simulation.enableFrame();
+  public void teleopInit() {
+    if (checkSim() == false) {
+      checkSim();
+    } else {
+      simulation.enableFrame();
+      simulation.getInstance();
+    }
   }
 
   @Override
   public void teleopPeriodic() {
-    simulation.rotate(joystick.getTwist());
-    simulation.setPosition(0, joystick.getY()*4);
-    System.out.println(joystick.getX() + " " + joystick.getY() + " " + joystick.getDirectionDegrees() + " " + joystick.getTwist());
-    simulation.run();
+    if (checkSim() == false) {
+      checkSim();
+    } else {
+      simulation.rotate(joystick.getX());
+      simulation.setPosition(0, joystick.getY()*4);
+      //System.out.println(joystick.getX() + " " + joystick.getY() + " " + joystick.getTwist());
+      simulation.refresh();
+    }
   }
 
   @Override
@@ -56,7 +83,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    simulation.disableFrame();
+    if (checkSim() == false) {
+      checkSim();
+    } else {
+      simulation.disableFrame();
+    }
   }
 
   @Override
