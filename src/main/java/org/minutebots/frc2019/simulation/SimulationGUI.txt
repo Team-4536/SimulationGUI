@@ -1,0 +1,164 @@
+package org.minutebots.frc2019.simulation;
+
+import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import javax.swing.*;
+
+import javax.imageio.ImageIO;
+import javax.swing.WindowConstants;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+public class SimulationGUI extends JPanel {
+    private static SimulationGUI instance;
+    
+	// The frame and it's attributes
+	static int frameWidth = 600;
+    static int frameHeight = 600;
+    static JFrame frame; 
+	
+	// The robot’s rotation
+    double rotation;
+
+	static int robotX = 0;
+	static int robotY = 0;
+	
+    public SimulationGUI() {
+        
+    }
+	
+	// Method for using USB Joysticks
+	public SimulationGUI(String title) {
+		SimulationGUI simulation = new SimulationGUI();
+        frame = new JFrame(title);
+		//frame.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize())); // Set Size
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Full screen
+        frame.setUndecorated(true); // Undecorate
+        frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(simulation); // You could use: frame.add(main);
+
+        frameWidth = frame.getWidth();
+        frameHeight = frame.getHeight();
+	}
+    
+    public void enableFrame() {
+        if (frame != null) {
+            frame.setVisible(true);
+        }
+    }
+
+    public void disableFrame() {
+        if (frame != null) {
+            frame.setVisible(false);
+        }
+    }
+
+    public final void rotate(double joystickX) {
+        double tempRotation;
+        if (joystickX == 0) {
+            tempRotation = 10;
+        } else {
+            if (rotation == 0) rotation = 0;
+            tempRotation = rotation + joystickX;
+        }
+
+        rotation = rotation + tempRotation;
+    }
+
+    public void setPosition(double joystickX, double joystickY) {
+        robotX = robotX + (int)joystickX;
+        robotY = robotY + (int)joystickY;
+    }
+
+	// Get instance
+	public SimulationGUI getInstance() {
+		if (instance == null) { instance = new SimulationGUI(); }
+        return instance;
+    }
+	
+    // Use this to start drawing all the lines
+    @Override
+	public void paintComponent(Graphics g) {
+		//super.paintComponent(g);
+        //g.setColor(Color.blue);
+        
+        Graphics2D g2 = (Graphics2D)g;
+
+        // Change the origin point
+        g2.rotate(Math.toRadians(rotation));
+        g2.translate(this.getWidth()/3 + 100, this.getHeight()/2); //105
+        
+		// rotate the graphics board
+
+		// Draw the robot
+		newMeccanumBot(g2);
+	}
+	
+	// Method to draw the Meccanum drivetrain
+	public void newMeccanumBot(Graphics2D g2) {
+
+        /* NEW!!!!!!! */
+        final BufferedImage image = ImageIO.read(new File("C:\\Projects\\MavenSandbox\\src\\main\\resources\\img.jpg"));
+        g2.drawImage(image, 0, 0, null);
+
+		// Proper use: X, Y, Width, Height
+        /*
+        int[] chassis_cords = {-75 + robotX, -100 + robotY, 150, 200}; //{-75, -100, 150, 200}
+		int[] upperRightWheel_cords = {75 + robotX, -100 + robotY, 25, 60}; //{75, -100, 25, 60}
+		int[] lowerRightWheel_cords = {75 + robotX, 40 + robotY, 25, 60}; //{75, 40, 25, 60}
+		int[] upperLeftWheel_cords = {-100 + robotX, -100 + robotY, 25, 60}; //{-100, -100, 25, 60}
+		int[] lowerLeftWheel_cords = {-100 + robotX, 40 + robotY, 25, 60}; //{-100, 40, 25, 60}
+        */
+        
+		// We use “Rectangle” because we can get attributes from that
+        /*
+        Rectangle chassis = new Rectangle(chassis_cords[0], chassis_cords[1], chassis_cords[2], chassis_cords[3]);
+		Rectangle upperRightWheel = new Rectangle(upperRightWheel_cords[0], upperRightWheel_cords[1], upperRightWheel_cords[2], upperRightWheel_cords[3]);
+		Rectangle lowerRightWheel = new Rectangle(lowerRightWheel_cords[0], lowerRightWheel_cords[1], lowerRightWheel_cords[2], lowerRightWheel_cords[3]);
+		Rectangle upperLeftWheel = new Rectangle(upperLeftWheel_cords[0], upperLeftWheel_cords[1], upperLeftWheel_cords[2], upperLeftWheel_cords[3]);
+        Rectangle lowerLeftWheel = new Rectangle(lowerLeftWheel_cords[0], lowerLeftWheel_cords[1], lowerLeftWheel_cords[2], lowerLeftWheel_cords[3]);
+        g2.draw(chassis);
+        g2.draw(upperRightWheel);
+        g2.draw(lowerRightWheel);
+        g2.draw(upperLeftWheel);
+        g2.draw(lowerLeftWheel);
+        */
+        g2.drawRect(-30, 10, 10, 50);
+
+        // Draw the center Point
+        g2.drawOval(0, 0, 3, 3);
+	}
+	
+	// (Graphics2D) Draw a new line at given cordinates
+	public void newLine(Graphics2D g, int[] points) {
+		if (points.length < 4 || points.length > 4) {
+			System.err.println("Not enough integers");
+		} else {
+			g.drawLine(points[0], points[1], points[2], points[3]);
+		}
+	}
+	
+	// (Graphics2D) Draw a new Rectangle at given cordinates with a specified width and height
+	public Rectangle newRect(Graphics2D g, int[] points) {
+		if (points.length < 4 || points.length > 4) {
+			System.err.println("Not enough integers");
+		} else {
+			Rectangle r = new Rectangle(points[0], points[1], points[2], points[3]);
+			g.draw(r);
+			return r;
+		}
+		// Fallback solution, return something, but nothing
+		return new Rectangle(0, 0, 0, 0);
+	}
+	
+	public void run() {
+        if (frame == null) {
+            System.err.println("No frame object given!");
+        } else {
+            frame.repaint();
+        }
+	}
+}
