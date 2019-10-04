@@ -30,8 +30,6 @@ public class Robot extends TimedRobot {
         simulation = new SimulationGUI("4536 FRC SimulatorGUI");
       } catch(IOException e) {
         e.printStackTrace();
-      } catch(NullPointerException e) {
-        e.printStackTrace();
       }
       return false;
     } else {
@@ -66,9 +64,9 @@ public class Robot extends TimedRobot {
     if (checkSim() == false) {
       checkSim();
     } else {
+      // Make it so turning the joystick will turn the robot instead
       simulation.rotate(joystick.getX());
       simulation.setPosition(0, joystick.getY()*4);
-      //System.out.println(joystick.getX() + " " + joystick.getY() + " " + joystick.getTwist());
       simulation.refresh();
     }
   }
