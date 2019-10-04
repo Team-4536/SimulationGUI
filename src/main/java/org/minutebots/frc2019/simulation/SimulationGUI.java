@@ -26,6 +26,7 @@ public class SimulationGUI {
     private static SimulationGUI instance;
     
     private JFrame frame;
+	private JPanel panel;
     
     static double rotation = 0;
     
@@ -99,7 +100,7 @@ public class SimulationGUI {
         BufferedImage drivetrain = blurImageBorder(rawChasis, 1);
         
         frame = new JFrame(windowTitle);
-        frame.add(new JPanel() {
+        frame.add(panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D)g;
@@ -157,6 +158,9 @@ public class SimulationGUI {
     }
     
     public void refresh() {
-        if (frame != null) frame.repaint();
+        if (frame != null) {
+	    frame.repaint();
+	    panel.repaint();
+	}
     }
 }
