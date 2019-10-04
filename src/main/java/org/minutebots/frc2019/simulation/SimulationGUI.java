@@ -96,7 +96,7 @@ public class SimulationGUI {
     }
     
     public SimulationGUI(String windowTitle) throws IOException {
-        BufferedImage rawChasis = ImageIO.read(new File("src\\main\\java\\org\\minutebots\\frc2019\\simulation\\robot.jpeg"));
+        BufferedImage rawChasis = ImageIO.read(new File("src\\main\\java\\org\\minutebots\\frc2019\\simulation\\drivetrain-img-dict\\ucpd_drivetrain.jpeg"));
         BufferedImage drivetrain = blurImageBorder(rawChasis, 1);
         
         frame = new JFrame(windowTitle);
