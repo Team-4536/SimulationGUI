@@ -26,12 +26,12 @@ public class SimulationGUI {
     private static SimulationGUI instance;
     
     private JFrame frame;
-	private JPanel panel;
+    private JPanel panel;
     
     static double rotation = 0;
     
     static int robotX = 0;
-	static int robotY = 0;
+    static int robotY = 0;
 	
     public SimulationGUI() {
         
@@ -132,7 +132,7 @@ public class SimulationGUI {
     }
     
     public SimulationGUI getInstance() {
-		if (instance == null) { instance = new SimulationGUI(); }
+	if (instance == null) { instance = new SimulationGUI(); }
         return instance;
     }
     
