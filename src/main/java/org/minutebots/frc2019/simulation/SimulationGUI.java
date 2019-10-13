@@ -110,16 +110,31 @@ public class SimulationGUI {
                 // Change the origin point
                 g2d.translate(getWidth()/3 + 100, getHeight()/2); //105
                 
+		    
+		//Make a backup so that we can reset our graphics object after using it.
+		AffineTransform backup = g2d.getTransform();
+		//rx is the x coordinate for rotation, ry is the y coordinate for rotation, and angle
+		//is the angle to rotate the image. If you want to rotate around the center of an image,
+		//use the image's center x and y coordinates for rx and ry.
+		AffineTransform a = AffineTransform.getRotateInstance(angle, robotX+50, robotX+50);
+		
+		//Set our Graphics2D object to the transform
+		g2d.setTransform(a);
+		
                 // Draw the Center point
                 g.drawOval(0, 0, 3, 3);
                 
                 // Rotate
-                g2d.rotate(Math.toRadians(rotation), getWidth() / 2.0, getHeight() / 2.0);
+                //g2d.rotate(Math.toRadians(rotation), getWidth() / 2.0, getHeight() / 2.0);
                 
+		// Set the rendering settings
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 
+		//Draw our image like normal
                 if (drivetrain != null) g2d.drawImage(drivetrain, -50 + robotX, -50 + robotY, 100, 100, this);
+		//Reset our graphics object so we can draw with it again.
+		g2d.setTransform(backup);
             }
         });
         
