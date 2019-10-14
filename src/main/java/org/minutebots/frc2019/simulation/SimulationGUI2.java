@@ -1,3 +1,5 @@
+package org.minutebots.frc2019.simulation;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
