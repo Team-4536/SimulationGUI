@@ -54,11 +54,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    simulationInit();
-    // Make it so turning the joystick will turn the robot instead
-    simulation.rotate(joystick.getX());
-    simulation.setPosition(0, joystick.getY()*4);
-    simulation.refresh();
+      simulationInit();
+      Object delay = new Object();
+      try {
+          synchronized (delay) {
+              simulation.rotate(joystick.getX());
+              simulation.setPosition(0, joystick.getY()*4);
+              simulation.refresh();
+              delay.wait(90);
+          }
+      } catch (InterruptedException e) {
+          e.printStackTrace();
+      }
   }
 
   @Override
