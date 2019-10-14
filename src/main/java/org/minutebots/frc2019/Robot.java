@@ -24,19 +24,15 @@ public class Robot extends TimedRobot {
   SimulationGUI simulation;
   int i = 0;
 
-  public boolean checkSim() {
-    if (simulation == null) {
-      try {
-        simulation = new SimulationGUI("4536 FRC SimulatorGUI");
-      } catch(IOException e) {
-        e.printStackTrace();
+  private void simulationInit() {
+      if (simulation == null) {
+          try {
+              simulation = new SimulationGUI("4536 FRC SimulatorGUI", "robot.jpeg");
+          } catch(IOException e) {
+              e.printStackTrace();
+          }
       }
-      return false;
-    } else {
-      return true;
-    }
   }
-
   @Override
   public void robotInit() {
   }
@@ -51,24 +47,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    if (checkSim() == false) {
-      checkSim();
-    } else {
-      simulation.enableFrame();
-      simulation.getInstance();
-    }
+    simulationInit();
+    simulation.enableFrame();
+    simulation.getInstance();
   }
 
   @Override
   public void teleopPeriodic() {
-    if (checkSim() == false) {
-      checkSim();
-    } else {
-      // Make it so turning the joystick will turn the robot instead
-      simulation.rotate(joystick.getX());
-      simulation.setPosition(0, joystick.getY()*4);
-      simulation.refresh();
-    }
+    simulationInit();
+    // Make it so turning the joystick will turn the robot instead
+    simulation.rotate(joystick.getX());
+    simulation.setPosition(0, joystick.getY()*4);
+    simulation.refresh();
   }
 
   @Override
@@ -81,16 +71,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    if (checkSim() == false) {
-      checkSim();
-    } else {
-      simulation.disableFrame();
-    }
+    simulationInit();
+    simulation.disableFrame();
   }
 
   @Override
   public void disabledPeriodic() {
-
   }
 
 }
