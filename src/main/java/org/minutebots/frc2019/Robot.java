@@ -27,7 +27,7 @@ public class Robot extends TimedRobot {
   private void simulationInit() {
       if (simulation == null) {
           try {
-              simulation = new SimulationGUI("4536 FRC SimulatorGUI", "robot.jpeg");
+              simulation = new SimulationGUI("4536 FRC SimulatorGUI", "ucpd_drivetrain.jpeg");
           } catch(IOException e) {
               e.printStackTrace();
           }
@@ -58,10 +58,11 @@ public class Robot extends TimedRobot {
       Object delay = new Object();
       try {
           synchronized (delay) {
-              simulation.rotate(joystick.getX());
-              simulation.setPosition(0, joystick.getY()*4);
+              // Default, joystick input * 5
+              simulation.rotate(joystick.getTwist()*20); 
+              simulation.setPosition(joystick.getX()*10, joystick.getY()*10);
               simulation.refresh();
-              delay.wait(90);
+              delay.wait(5);
           }
       } catch (InterruptedException e) {
           e.printStackTrace();

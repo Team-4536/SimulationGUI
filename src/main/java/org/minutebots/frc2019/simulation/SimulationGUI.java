@@ -101,7 +101,7 @@ public class SimulationGUI {
     }
     
     public SimulationGUI(String windowTitle, String robotImgPath) throws IOException {
-        BufferedImage rawChasis = ImageIO.read(new File(robotImgPath));
+        BufferedImage rawChasis = ImageIO.read(new File("src\\main\\java\\org\\minutebots\\frc2019\\simulation\\drivetrain-img-dict\\" + robotImgPath));
         BufferedImage drivetrain = blurImageBorder(rawChasis, 1);
         
         frame = new JFrame(windowTitle);
@@ -166,8 +166,10 @@ public class SimulationGUI {
     }
     
     public void setPosition(double joystickX, double joystickY) {
-        robotX = robotX + (int)joystickX;
-        robotY = robotY + (int)joystickY;
+        System.out.println(rotation%360);
+        // robotX and robotY are the robot's cordinates, rotaion is the angle that the robot should turn to
+        robotX += (int)joystickX;
+        robotY += (int)joystickY;
     }
     
     public void refresh() {
