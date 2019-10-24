@@ -1,5 +1,10 @@
 package org.minutebots.frc2019.simulation;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.nio.file.*;
+import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,11 +26,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.nio.file.*;
-import java.net.URL;
 
 public class SimulationGUI {
     private static SimulationGUI instance;
@@ -35,8 +35,8 @@ public class SimulationGUI {
     
     static double rotation = 0;
     
-    static int robotX = 0;
-    static int robotY = 0;
+    private static double robotX = 0;
+    private static double robotY = 0;
 	
     public SimulationGUI() {
         
@@ -47,8 +47,8 @@ public class SimulationGUI {
         int h = input.getHeight();
         BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g = output.createGraphics();
-        g.drawImage(input, 0, 0, null);
+        Graphics2D g = output.createGraphics(); // We create a new Graphics2D object
+        g.drawImage(input, 0, 0, null); // We draw the object
 
         g.setComposite(AlphaComposite.DstOut);
         Color c0 = new Color(0x000000FF);
@@ -73,35 +73,37 @@ public class SimulationGUI {
         final Color[] colorArray = new Color[]{ c0, c0 };
 
         // Top Left
-        g.setPaint(new RadialGradientPaint(new Rectangle2D.Double(0, 0, border + border, border + border),
-                floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
+        g.setPaint(new RadialGradientPaint(new Rectangle2D.Double(0, 0, border + border, border + border), floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
         g.fill(new Rectangle2D.Double(0, 0, border, border));
 
         // Top Right
-        g.setPaint(new RadialGradientPaint(
-                new Rectangle2D.Double(w - border - border, 0, border + border, border + border),
-                floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
+        g.setPaint(new RadialGradientPaint(new Rectangle2D.Double(w - border - border, 0, border + border, border + border), floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
         g.fill(new Rectangle2D.Double(w - border, 0, border, border));
 
         // Bottom Left
-        g.setPaint(new RadialGradientPaint(
-                new Rectangle2D.Double(0, h - border - border, border + border, border + border),
-                floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
+        g.setPaint(new RadialGradientPaint(new Rectangle2D.Double(0, h - border - border, border + border, border + border), floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
         g.fill(new Rectangle2D.Double(0, h - border, border, border));
 
         // Bottom Right
-        g.setPaint(new RadialGradientPaint(
-                new Rectangle2D.Double(w - border - border, h - border - border, border + border, border + border),
-                floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
+        g.setPaint(new RadialGradientPaint(new Rectangle2D.Double(w - border - border, h - border - border, border + border, border + border), floatArray, colorArray, MultipleGradientPaint.CycleMethod.NO_CYCLE));
         g.fill(new Rectangle2D.Double(w - border, h - border, border, border));
-
-        g.dispose();
+        
+        
+        g.dispose(); // Get rid of the Graphics object
 
         return output;
     }
     
-    public SimulationGUI(String windowTitle, String robotImgPath) throws IOException {
-        BufferedImage rawChasis = ImageIO.read(new File("src\\main\\java\\org\\minutebots\\frc2019\\simulation\\drivetrain-img-dict\\" + robotImgPath));
+    public SimulationGUI(String windowTitle, String robotImgPath) {
+        try {
+            guiInitHelper(windowTitle, robotImgPath);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void guiInitHelper(String windowTitle, String imgPath) throws IOException {
+        BufferedImage rawChasis = ImageIO.read(new File(imgPath));
         BufferedImage drivetrain = blurImageBorder(rawChasis, 1);
         
         frame = new JFrame(windowTitle);
@@ -129,7 +131,8 @@ public class SimulationGUI {
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 
                 //Draw our image like normal
-                if (drivetrain != null) g2d.drawImage(drivetrain, robotX, robotY, 100, 100, null);
+                if (drivetrain != null) g2d.drawImage(drivetrain, (int)robotX, (int)robotY, 100, 100, null);
+                //g2d.drawImage(drivetrain, robotX, robotY, 100, 100, null);
                 
                 //Reset our graphics object so we can draw it again
                 g2d.dispose();
@@ -145,37 +148,54 @@ public class SimulationGUI {
     }
     
     public SimulationGUI getInstance() {
-        if (instance == null) { instance = new SimulationGUI(); }
+        if (instance == null) instance = new SimulationGUI();
         return instance;
     }
     
-    public void enableFrame() {
+    public void enable() {
         if (frame != null) {
             frame.setVisible(true);
         }
     }
 
-    public void disableFrame() {
+    public void disable() {
         if (frame != null) {
             frame.setVisible(false);
         }
     }
     
-    public void rotate(double joystickX) {
-        rotation = rotation + joystickX;
+    public void rotate(double inputAngle) {
+        rotation = rotation + inputAngle;
     }
     
-    public void setPosition(double joystickX, double joystickY) {
-        System.out.println(rotation%360);
-        // robotX and robotY are the robot's cordinates, rotaion is the angle that the robot should turn to
-        robotX += (int)joystickX;
-        robotY += (int)joystickY;
+    /*
+     * Method for updating the position.
+    */
+    public void updatePosition(double inputX, double inputY) {
+        // robotX = robotX + (int)inputX;
+        // robotY = robotY + (int)inputY;
+        robotX = robotX + inputX*Math.cos(rotation);
+        robotY = robotY + inputY*Math.sin(rotation);
+        
+        System.out.println(robotX+" : "+robotY+" : "+inputX+" : "+inputY);
+    }
+    
+    /*
+     * Method for updating the position and the rotation.
+    */
+    public void updatePosition(double inputX, double inputY, double inputAngle) {
+        // Set the position
+        robotX = robotX + (int)inputX;
+        robotY = robotY + (int)inputY;
+        
+        // Set the rotation
+        rotation = rotation + inputAngle;
     }
     
     public void refresh() {
         if (frame != null) {
             frame.repaint();
             panel.repaint();
-        }
+        } else System.out.println("4536 Simulation Error: JFrame object not found");
 	}
 }
