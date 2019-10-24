@@ -35,11 +35,7 @@ public class Robot extends TimedRobot {
 
     private void simulationInit() {
         if (simulation == null) {
-            try {
-                simulation = new SimulationGUI("4536 FRC SimulatorGUI", "ucpd_drivetrain.jpeg");
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
+            simulation = new SimulationGUI("4536 FRC SimulatorGUI", "ucpd_drivetrain.jpeg");
         }
     }
 
