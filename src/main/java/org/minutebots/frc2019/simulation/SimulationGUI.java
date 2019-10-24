@@ -37,6 +37,8 @@ public class SimulationGUI {
     
     private static double robotX = 0;
     private static double robotY = 0;
+
+    private static final int robotSpeed = 20;
 	
     public SimulationGUI() {
         
@@ -185,8 +187,8 @@ public class SimulationGUI {
     */
     public void updatePosition(double inputX, double inputY, double inputAngle) {
         // Set the position
-        robotX = robotX + (int)inputX;
-        robotY = robotY + (int)inputY;
+        robotX = robotX + (int)(inputX*robotSpeed);
+        robotY = robotY + (int)(inputY*robotSpeed);
         
         // Set the rotation
         rotation = rotation + inputAngle;
