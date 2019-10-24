@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        simulationInit();
     }
 
     @Override
@@ -71,9 +72,8 @@ public class Robot extends TimedRobot {
         differential.arcadeDrive(joystick.getY(), joystick.getX());
 
         // we send input to the simulator
-        simulationInit();
         Object delay = new Object();
-        try {
+        new Thread(() -> try {
             synchronized (delay) {
                 // Default, joystick input * 5
                 simulation.rotate(joystick.getTwist()*20); 
@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        });
     }
 
     @Override
