@@ -1,5 +1,5 @@
 # SimulationGUI
-Simulated robot visualization written in Java by Ridley Nelson and Kevin Tran.
+Simulated robot visualization written in Java by Ridley Nelson.
 
 ## What Does it Do?
 It gives you a basic visualization of how your robot code **(might)** work with your robot.
