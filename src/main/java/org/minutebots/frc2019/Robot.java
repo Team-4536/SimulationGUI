@@ -2,7 +2,7 @@ package org.minutebots.frc2019;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
-
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -60,7 +60,8 @@ public class Robot extends TimedRobot {
         simulation.enable();
 
         // we initialize the camera server
-        CameraServer.getInstance().startAutomaticCapture();
+        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(600, 400);
     }
 
     @Override

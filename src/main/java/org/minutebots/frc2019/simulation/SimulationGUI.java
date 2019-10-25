@@ -29,6 +29,9 @@ public class SimulationGUI {
     private static double robotX = 0;
     private static double robotY = 0;
 
+    private static double rX = 0;
+    private static double rY = 0;
+
     private static final int robotSpeed = 20;
 	
     public SimulationGUI() {
@@ -176,6 +179,9 @@ public class SimulationGUI {
         robotX = robotX + (int)(inputX*robotSpeed);
         robotY = robotY + (int)(inputY*robotSpeed);
         
+        //rX = Math.cos(Math.toRadians(rotation));
+        //rY = Math.sin(Math.toRadians(rotation));
+
         // Set the rotation
         rotation = rotation + inputAngle;
 
