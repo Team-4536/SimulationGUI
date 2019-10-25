@@ -34,9 +34,7 @@ public class Robot extends TimedRobot {
     public DifferentialDrive differential = new DifferentialDrive(backLeftWheel, backRightWheel);
 
     private void simulationInit() {
-        if (simulation == null) {
-            simulation = new SimulationGUI("4536 FRC SimulatorGUI", "ucpd_drivetrain.jpeg");
-        }
+        if (simulation == null) simulation = new SimulationGUI("4536 FRC SimulatorGUI", "src\\main\\java\\org\\minutebots\\frc2019\\simulation\\drivetrain-img-dict\\ucpd_drivetrain.jpeg");
     }
 
     /**
@@ -59,8 +57,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         simulationInit();
-        simulation.enableFrame();
-        simulation.getInstance();
+        simulation.enable();
 
         // we initialize the camera server
         CameraServer.getInstance().startAutomaticCapture();
@@ -72,18 +69,12 @@ public class Robot extends TimedRobot {
         differential.arcadeDrive(joystick.getY(), joystick.getX());
 
         // we send input to the simulator
-        Object delay = new Object();
-        new Thread(() -> try {
-            synchronized (delay) {
-                // Default, joystick input * 5
-                simulation.rotate(joystick.getTwist()*20); 
-                simulation.setPosition(joystick.getX()*10, joystick.getY()*10);
-                simulation.refresh();
-                delay.wait(5);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        });
+        new Thread(() -> {
+            simulationInit();
+            simulation.getInstance();
+            simulation.setPosition(joystick.getX(), joystick.getY(), joystick.getTwist());
+            simulation.refresh();
+        }).start();
     }
 
     @Override
@@ -97,7 +88,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         simulationInit();
-        simulation.disableFrame();
+        simulation.disable();
     }
 
     @Override

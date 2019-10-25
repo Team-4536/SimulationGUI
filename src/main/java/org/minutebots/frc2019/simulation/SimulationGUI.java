@@ -2,15 +2,9 @@ package org.minutebots.frc2019.simulation;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.nio.file.*;
-import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.awt.*;
-import java.awt.Point;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -18,14 +12,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MultipleGradientPaint;
 import java.awt.RadialGradientPaint;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SimulationGUI {
     private static SimulationGUI instance;
@@ -173,25 +164,22 @@ public class SimulationGUI {
     /*
      * Method for updating the position.
     */
-    public void updatePosition(double inputX, double inputY) {
-        // robotX = robotX + (int)inputX;
-        // robotY = robotY + (int)inputY;
-        robotX = robotX + inputX*Math.cos(rotation);
-        robotY = robotY + inputY*Math.sin(rotation);
-        
-        System.out.println(robotX+" : "+robotY+" : "+inputX+" : "+inputY);
+    public void setPosition(double inputX, double inputY) {
+        setPosition(inputX, inputY,0);
     }
     
     /*
      * Method for updating the position and the rotation.
     */
-    public void updatePosition(double inputX, double inputY, double inputAngle) {
+    public void setPosition(double inputX, double inputY, double inputAngle) {
         // Set the position
         robotX = robotX + (int)(inputX*robotSpeed);
         robotY = robotY + (int)(inputY*robotSpeed);
         
         // Set the rotation
         rotation = rotation + inputAngle;
+
+        System.out.println("robotX: "+robotX+" robotY: "+robotY+" inputX: "+inputX+" inputY: "+inputY+" rotation: "+rotation+" input rotation: "+inputAngle);
     }
     
     public void refresh() {
