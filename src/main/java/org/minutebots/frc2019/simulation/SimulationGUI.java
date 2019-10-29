@@ -5,6 +5,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import java.awt.Image;
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -21,24 +24,33 @@ import java.awt.image.BufferedImage;
 public class SimulationGUI {
     private static SimulationGUI instance;
     
+    // Frame and feild attributes
     private JFrame frame;
     private JPanel panel;
+    private int frameWidth, frameHeight;
     
+    // Robot attributes
     static double rotation = 0;
-    
-    private static double robotX = 0;
-    private static double robotY = 0;
-
-    private static double rX = 0;
-    private static double rY = 0;
-
+    private static double robotX = 0, robotY = 0;
+    private static double rX = 0, rY = 0;
     private static final int robotSpeed = 20;
+	private static final int robotRadius = 50;
+	private static double centerX = 50, centerY = 50;
+	
+	// Trig values
+	private static int speedX = 0, speedY = 0;
+	private static int velocityX = 0, velocityY = 0;
+	private static double direction = Math.PI/2;
+	private static double spinSpeed = 2;
+	private static int acceleration = 3;
+	private static int speedForce = 0;
+	private static int friction = 1;
 	
     public SimulationGUI() {
         
     }
     
-    private static BufferedImage blurImageBorder(BufferedImage input, double border) {
+    private static Image blurImageBorder(BufferedImage input, double border) {
         int w = input.getWidth();
         int h = input.getHeight();
         BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -100,7 +112,7 @@ public class SimulationGUI {
     
     private void guiInitHelper(String windowTitle, String imgPath) throws IOException {
         BufferedImage rawChasis = ImageIO.read(new File(imgPath));
-        BufferedImage drivetrain = blurImageBorder(rawChasis, 1);
+        Image drivetrain = blurImageBorder(rawChasis, 1);
         
         frame = new JFrame(windowTitle);
         frame.add(panel = new JPanel() {
@@ -127,6 +139,7 @@ public class SimulationGUI {
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 
                 //Draw our image like normal
+
                 if (drivetrain != null) g2d.drawImage(drivetrain, (int)robotX, (int)robotY, 100, 100, null);
                 //g2d.drawImage(drivetrain, robotX, robotY, 100, 100, null);
                 
@@ -138,9 +151,12 @@ public class SimulationGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close on “close”
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // Full screen
         frame.setUndecorated(true); // Undecorated
-        
         frame.setLocationRelativeTo(null); // Use if you know what this is
         frame.setVisible(true);
+
+        frameWidth = frame.getWidth();
+        frameHeight = frame.getHeight();
+        System.out.println(frameWidth);
     }
     
     public SimulationGUI getInstance() {
@@ -176,14 +192,17 @@ public class SimulationGUI {
     */
     public void setPosition(double inputX, double inputY, double inputAngle) {
         // Set the position
-        robotX = robotX + (int)(inputX*robotSpeed);
-        robotY = robotY + (int)(inputY*robotSpeed);
+
+        if (inputX > 0.5 || inputY > 0.5 || inputAngle > 0.5 && inputX != 0.000 || inputAngle != 0.000 || inputY != 0.000) {
+            robotX += (int)(inputX*robotSpeed);
+            robotY += (int)(inputY*robotSpeed);
+        }
         
         //rX = Math.cos(Math.toRadians(rotation));
         //rY = Math.sin(Math.toRadians(rotation));
 
         // Set the rotation
-        rotation = rotation + inputAngle;
+        rotate(inputAngle);
 
         System.out.println("robotX: "+robotX+" robotY: "+robotY+" inputX: "+inputX+" inputY: "+inputY+" rotation: "+rotation+" input rotation: "+inputAngle);
     }

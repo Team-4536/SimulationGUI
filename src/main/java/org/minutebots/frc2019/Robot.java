@@ -2,15 +2,15 @@ package org.minutebots.frc2019;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
-
-import java.io.IOException;
-
 import org.minutebots.frc2019.simulation.SimulationGUI;
+import org.minutebots.frc2019.simulation.SimUtils;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -19,7 +19,7 @@ import org.minutebots.frc2019.simulation.SimulationGUI;
  * creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot implements SimUtils {
     // create the simulation object
     private SimulationGUI simulation;
 
@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
         backRightWheel = new Spark(1);
     
     // get the joystick
-    private Joystick joystick = new Joystick(0);
+    private final Joystick joystick = new Joystick(0);
 
     // set the drive
     public DifferentialDrive differential = new DifferentialDrive(backLeftWheel, backRightWheel);
@@ -60,20 +60,22 @@ public class Robot extends TimedRobot {
         simulation.enable();
 
         // we initialize the camera server
-        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(600, 400);
+        if (!replitTesting && simulating == false) {
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(400, 300);
+        }
     }
 
     @Override
     public void teleopPeriodic() {
         // we send the input to the robot
-        differential.arcadeDrive(joystick.getY(), joystick.getX());
+        if (!replitTesting && simulating == false) differential.arcadeDrive(joystick.getY(), joystick.getX());
 
         // we send input to the simulator
         new Thread(() -> {
             simulationInit();
             simulation.getInstance();
-            simulation.setPosition(joystick.getX(), joystick.getY(), joystick.getTwist());
+            simulation.setPosition(Oi.xController.getX(Hand.kLeft), Oi.xController.getY(Hand.kLeft), Oi.xController.getX(Hand.kRight));
             simulation.refresh();
         }).start();
     }
