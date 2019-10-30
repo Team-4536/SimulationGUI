@@ -1,3 +1,5 @@
+package org.minutebots.frc2019.simulation;
+
 public class VirtualBot implements VirtualBotConfigs, SimUtils {
     // Robot attributes
     private String drivetrain = "";
