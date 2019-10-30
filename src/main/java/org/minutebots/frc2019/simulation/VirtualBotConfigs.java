@@ -1,3 +1,5 @@
+package org.minutebots.frc2019.simulation;
+
 public interface VirtualBotConfigs {
     public String getImagePath();
     public double getX();
