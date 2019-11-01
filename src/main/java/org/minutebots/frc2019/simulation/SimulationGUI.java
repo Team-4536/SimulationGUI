@@ -18,6 +18,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import java.util.Vector;
+
 public class SimulationGUI {
     private static SimulationGUI instance;
     
@@ -31,6 +33,8 @@ public class SimulationGUI {
 
     private static double rX = 0;
     private static double rY = 0;
+	
+	private Vector vector = new Vector();
 
     private static final int robotSpeed = 20;
 	
@@ -175,15 +179,19 @@ public class SimulationGUI {
      * Method for updating the position and the rotation.
     */
     public void setPosition(double inputX, double inputY, double inputAngle) {
-        // Set the position
+        // Set the new position
+		/* Mecanum Drive -> */
         robotX = robotX + (int)(inputX*robotSpeed);
         robotY = robotY + (int)(inputY*robotSpeed);
-        
-        //rX += speed * sin(angle);
-	//rY += speed * cos(angle);
-
-        // Set the rotation
-        rotation = rotation + inputAngle;
+        /* <- */
+		
+        // rX += speed * sin(angle);
+		// rY += speed * cos(angle);
+		
+		// rX = direction.x * speed + rX;
+		// rY = direction.y * speed + rY;
+		
+        rotation = rotation + inputAngle; // Set the new rotation
 
         System.out.println("robotX: "+robotX+" robotY: "+robotY+" inputX: "+inputX+" inputY: "+inputY+" rotation: "+rotation+" input rotation: "+inputAngle);
     }
