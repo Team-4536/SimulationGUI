@@ -34,20 +34,8 @@ public class SimulationGUI {
     // Robot attributes
     static VirtualBot robot;
     static double rotation = 0;
-<<<<<<< HEAD
     private static double robotX = 0, robotY = 0;
     private static double rX = 0, rY = 0;
-=======
-    
-    private static double robotX = 0;
-    private static double robotY = 0;
-
-    private static double rX = 0;
-    private static double rY = 0;
-	
-	private Vector vector = new Vector();
-
->>>>>>> 2e15b62bafcde326503d03747b977d75912f0947
     private static final int robotSpeed = 20;
 	private static final int robotRadius = 50;
 	private static double centerX = 50, centerY = 50;
@@ -202,7 +190,6 @@ public class SimulationGUI {
      * Method for updating the position and the rotation.
     */
     public void setPosition(double inputX, double inputY, double inputAngle) {
-<<<<<<< HEAD
         // Set the position
         // if (inputX > 0.9 || inputY > 0.9 || inputAngle > 0.9 && inputX != 0.000 || inputAngle != 0.000 || inputY != 0.000) {
         //     robotX += (int)(inputX*robotSpeed);
@@ -219,21 +206,6 @@ public class SimulationGUI {
         robotY = robot.getY();
         rotation = robot.getAngle();
 
-=======
-        // Set the new position
-		/* Mecanum Drive -> */
-        robotX = robotX + (int)(inputX*robotSpeed);
-        robotY = robotY + (int)(inputY*robotSpeed);
-        /* <- */
-		
-        // rX += speed * sin(angle);
-		// rY += speed * cos(angle);
-		
-		// rX = direction.x * speed + rX;
-		// rY = direction.y * speed + rY;
-		
-        rotation = rotation + inputAngle; // Set the new rotation
->>>>>>> 2e15b62bafcde326503d03747b977d75912f0947
 
         // Set the rotation
         // rotate(inputAngle);
