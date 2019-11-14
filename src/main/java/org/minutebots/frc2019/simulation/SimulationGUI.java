@@ -30,6 +30,7 @@ public class SimulationGUI {
     private int frameWidth, frameHeight;
     
     // Robot attributes
+    static VirtualBot robot;
     static double rotation = 0;
     private static double robotX = 0, robotY = 0;
     private static double rX = 0, rY = 0;
@@ -102,9 +103,11 @@ public class SimulationGUI {
         return output;
     }
     
-    public SimulationGUI(String windowTitle, String robotImgPath) {
+    public SimulationGUI(String windowTitle, VirtualBot newRobot) {
         try {
-            guiInitHelper(windowTitle, robotImgPath);
+            this.robot = newRobot;
+            String s = newRobot.getImagePath();
+            guiInitHelper(windowTitle, s);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -131,6 +134,8 @@ public class SimulationGUI {
                 // Rotate
                 //AffineTransform backup = g2d.getTransform();
                 AffineTransform affineTransform = new AffineTransform();
+                
+                //toRadians(rotation)  1=right, 1.4 = down, 6=left
                 affineTransform.rotate(Math.toRadians(rotation), robotX + 50, robotY + 50);
                 g2d.setTransform(affineTransform);
                 
@@ -165,21 +170,13 @@ public class SimulationGUI {
     }
     
     public void enable() {
-        if (frame != null) {
-            frame.setVisible(true);
-        }
+        if (frame != null) frame.setVisible(true);
     }
 
     public void disable() {
-        if (frame != null) {
-            frame.setVisible(false);
-        }
+        if (frame != null) frame.setVisible(false);
     }
-    
-    public void rotate(double inputAngle) {
-        rotation = rotation + inputAngle;
-    }
-    
+
     /*
      * Method for updating the position.
     */
@@ -192,19 +189,26 @@ public class SimulationGUI {
     */
     public void setPosition(double inputX, double inputY, double inputAngle) {
         // Set the position
-
-        if (inputX > 0.5 || inputY > 0.5 || inputAngle > 0.5 && inputX != 0.000 || inputAngle != 0.000 || inputY != 0.000) {
-            robotX += (int)(inputX*robotSpeed);
-            robotY += (int)(inputY*robotSpeed);
-        }
+        // if (inputX > 0.9 || inputY > 0.9 || inputAngle > 0.9 && inputX != 0.000 || inputAngle != 0.000 || inputY != 0.000) {
+        //     robotX += (int)(inputX*robotSpeed);
+        //     robotY += (int)(inputY*robotSpeed);
+        // }
         
+        // DeadCode
         //rX = Math.cos(Math.toRadians(rotation));
         //rY = Math.sin(Math.toRadians(rotation));
 
-        // Set the rotation
-        rotate(inputAngle);
+        robot.setSpeed(20);
+        robot.setPosition(inputX, inputY, inputAngle);
+        robotX = robot.getX();
+        robotY = robot.getY();
+        rotation = robot.getAngle();
 
-        System.out.println("robotX: "+robotX+" robotY: "+robotY+" inputX: "+inputX+" inputY: "+inputY+" rotation: "+rotation+" input rotation: "+inputAngle);
+
+        // Set the rotation
+        // rotate(inputAngle);
+        
+        // System.out.println("robotX: "+robotX+" robotY: "+robotY+" inputX: "+inputX+" inputY: "+inputY+" rotation: "+rotation+" input rotation: "+inputAngle);
     }
     
     public void refresh() {

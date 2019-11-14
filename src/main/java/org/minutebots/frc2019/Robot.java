@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import org.minutebots.frc2019.simulation.SimulationGUI;
+import org.minutebots.frc2019.simulation.VirtualBot;
 import org.minutebots.frc2019.simulation.SimUtils;
 
 /**
@@ -22,19 +23,19 @@ import org.minutebots.frc2019.simulation.SimUtils;
 public class Robot extends TimedRobot implements SimUtils {
     // create the simulation object
     private SimulationGUI simulation;
+    private VirtualBot Asimov = new VirtualBot("Asimov", 4536, "mecanum");
 
     // get the 2 sparks
-    private Spark backLeftWheel = new Spark(0),
-        backRightWheel = new Spark(1);
+    private final Spark backLeftWheel = new Spark(0), backRightWheel = new Spark(1);
     
     // get the joystick
     private final Joystick joystick = new Joystick(0);
 
     // set the drive
-    public DifferentialDrive differential = new DifferentialDrive(backLeftWheel, backRightWheel);
+    public final DifferentialDrive differential = new DifferentialDrive(backLeftWheel, backRightWheel);
 
     private void simulationInit() {
-        if (simulation == null) simulation = new SimulationGUI("4536 FRC SimulatorGUI", "src\\main\\java\\org\\minutebots\\frc2019\\simulation\\drivetrain-img-dict\\ucpd_drivetrain.jpeg");
+        if (simulation == null) simulation = new SimulationGUI("4536 FRC SimulatorGUI", Asimov);
     }
 
     /**
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot implements SimUtils {
      */
     @Override
     public void robotInit() {
-        simulationInit();
+        if (simulating) simulationInit();
     }
 
     @Override
@@ -56,11 +57,13 @@ public class Robot extends TimedRobot implements SimUtils {
 
     @Override
     public void teleopInit() {
-        simulationInit();
-        simulation.enable();
+        if (simulating) {
+            simulationInit();
+            simulation.enable();
+        }
 
         // we initialize the camera server
-        if (!replitTesting && simulating == false) {
+        if (!replitTesting && !simulating) {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
             camera.setResolution(400, 300);
         }
@@ -69,15 +72,18 @@ public class Robot extends TimedRobot implements SimUtils {
     @Override
     public void teleopPeriodic() {
         // we send the input to the robot
-        if (!replitTesting && simulating == false) differential.arcadeDrive(joystick.getY(), joystick.getX());
+        if (!replitTesting && !simulating) differential.arcadeDrive(Oi.xController.getY(Hand.kLeft)*0.7, Oi.xController.getX(Hand.kRight)*0.8);
 
         // we send input to the simulator
-        new Thread(() -> {
-            simulationInit();
-            simulation.getInstance();
-            simulation.setPosition(Oi.xController.getX(Hand.kLeft), Oi.xController.getY(Hand.kLeft), Oi.xController.getX(Hand.kRight));
-            simulation.refresh();
-        }).start();
+        if (simulating) {
+            new Thread(() -> {
+                simulationInit();
+                simulation.getInstance();
+                simulation.setPosition(Oi.xController.getX(Hand.kLeft), Oi.xController.getY(Hand.kLeft), Oi.xController.getX(Hand.kRight));
+                simulation.refresh();
+            }).start();
+        }
+            
     }
 
     @Override
@@ -90,8 +96,10 @@ public class Robot extends TimedRobot implements SimUtils {
 
     @Override
     public void disabledInit() {
-        simulationInit();
-        simulation.disable();
+        if (simulating) {
+            simulationInit();
+            simulation.disable();
+        }
     }
 
     @Override

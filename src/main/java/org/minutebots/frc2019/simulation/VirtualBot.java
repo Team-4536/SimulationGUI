@@ -49,7 +49,7 @@ public class VirtualBot implements VirtualBotConfigs, SimUtils {
                     imagePath = "bin/ucpd_drivetrain.jpeg";
                     return;
             }
-        } else if (replitTesting == false) {
+        } else if (!replitTesting) {
             switch(drivetrain) {
                 case "mecanum":
                     imagePath = "src\\main\\java\\org\\minutebots\\frc2019\\simulation\\drivetrain-img-dict\\ucpd_mecanum.jpeg"; 
@@ -108,26 +108,32 @@ public class VirtualBot implements VirtualBotConfigs, SimUtils {
     }
     
     public void rotate(double angle) {
-        this.angle = Math.toRadians(this.angle + angle);
+        // this.angle = Math.toRadians(this.angle + angle);
+        this.angle += angle;
     }
     
     public void setPosition(double x, double y) {
         setPosition(x, y, 0);
     }
     public void setPosition(double inputX, double inputY, double inputAngle) {
-        if (drivetrain == "mecanum") {
-            x += (inputX*speed);
-            y += (inputY*speed);
-        } else if (drivetrain == "omni") {
-            x += (inputX*speed);
-            y += (inputY*speed);
-        } else if (drivetrain == "differential") {
-            x += (speed * Math.sin(inputAngle));
-            y += (speed * Math.cos(inputAngle));
-        } else if (drivetrain == "swerve") {
-            x += (speed * Math.sin(inputAngle));
-            y += (speed * Math.cos(inputAngle));
-        } else {
+        if (inputX > (float)0.9 || inputY > (float)0.9 || inputAngle > (float)0.9 || inputX < (float)-0.9 || inputY < (float)-0.9 || inputAngle < (float)-0.9) {
+            if (drivetrain == "mecanum") {
+                x += (inputX*speed);
+                y += (inputY*speed);
+                rotate(inputAngle);
+            }
+            if (drivetrain == "omni") {
+                x += (inputX*speed);
+                y += (inputY*speed);
+            }
+            if (drivetrain == "differential") {
+                x += (speed * Math.sin(inputAngle));
+                y += (speed * Math.cos(inputAngle));
+            }
+            if (drivetrain == "swerve") {
+                x += (speed * Math.sin(inputAngle));
+                y += (speed * Math.cos(inputAngle));
+            }
         }
     }
     
