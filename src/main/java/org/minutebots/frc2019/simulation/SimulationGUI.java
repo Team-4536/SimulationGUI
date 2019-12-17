@@ -95,10 +95,24 @@ public class SimulationGUI {
         return output;
     }
     
+<<<<<<< Updated upstream
     public SimulationGUI(String windowTitle) throws IOException {
         BufferedImage rawChasis = ImageIO.read(new File("src\\main\\java\\org\\minutebots\\frc2019\\simulation\\drivetrain-img-dict\\ucpd_drivetrain.jpeg"));
         BufferedImage drivetrain = blurImageBorder(rawChasis, 1);
         
+=======
+    public SimulationGUI(String windowTitle, VirtualBot newRobot) {
+        try {
+            this.robot = newRobot;
+            String s = newRobot.getImagePath();
+            guiInitHelper(windowTitle, s);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void guiInitHelper(String windowTitle, String imgPath) throws IOException {
+>>>>>>> Stashed changes
         frame = new JFrame(windowTitle);
         frame.add(panel = new JPanel() {
             @Override
@@ -114,12 +128,26 @@ public class SimulationGUI {
                 g.drawOval(0, 0, 3, 3);
                 
                 // Rotate
+<<<<<<< Updated upstream
                 g2d.rotate(Math.toRadians(rotation), getWidth() / 2.0, getHeight() / 2.0);
+=======
+                //AffineTransform backup = g2d.getTransform();
+                AffineTransform affineTransform = new AffineTransform();
+                affineTransform.rotate(Math.toRadians(robot.getAngle()), robot.getX() + robot.getWidth() / 2, robot.getY() + robot.getHeight() / 2);
+                affineTransform.translate(robot.getX(), robot.getY());
+                g2d.setTransform(affineTransform);
+>>>>>>> Stashed changes
                 
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 
+<<<<<<< Updated upstream
                 if (drivetrain != null) g2d.drawImage(drivetrain, -50 + robotX, -50 + robotY, 100, 100, this);
+=======
+                //Draw our image like normal
+                if (drivetrain != null) g2d.drawImage(robot.getImage(), robot.getX(), robot.getY(), affineTransform, null);
+                g2d.dispose();
+>>>>>>> Stashed changes
             }
         });
         
@@ -152,9 +180,19 @@ public class SimulationGUI {
         rotation = rotation + joystickX;
     }
     
+<<<<<<< Updated upstream
     public void setPosition(double joystickX, double joystickY) {
         robotX = robotX + (int)joystickX;
         robotY = robotY + (int)joystickY;
+=======
+    /*
+     * Method for updating the position and the rotation.
+    */
+    public void setPosition(double inputX, double inputY, double inputAngle) {
+        robot.setSpeed(20);
+        robot.setPosition(inputX, inputY, inputAngle);
+        // System.out.println("robotX: "+robotX+" robotY: "+robotY+" inputX: "+inputX+" inputY: "+inputY+" rotation: "+rotation+" input rotation: "+inputAngle);
+>>>>>>> Stashed changes
     }
     
     public void refresh() {
