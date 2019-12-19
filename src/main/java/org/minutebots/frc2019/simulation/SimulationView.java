@@ -1,3 +1,5 @@
+package org.minutebots.frc2019.simulation;
+
 import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
