@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import java.io.IOException;
 
 import org.minutebots.frc2019.simulation.SimulationGUI;
+import org.minutebots.frc2019.simulation.VirtualBot;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,11 +27,8 @@ public class Robot extends TimedRobot {
 
   public boolean checkSim() {
     if (simulation == null) {
-      try {
-        simulation = new SimulationGUI("4536 FRC SimulatorGUI");
-      } catch(IOException e) {
-        e.printStackTrace();
-      }
+      try {simulation = new SimulationGUI("4536 FRC SimulatorGUI", new VirtualBot("Minibot", 4536, "differential"));}
+      catch(IOException e) {e.printStackTrace();}
       return false;
     } else {
       return true;
