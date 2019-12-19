@@ -1,5 +1,8 @@
 package org.minutebots.frc2019.simulation;
 
+import java.awt.Image;
+import javax.swing.ImageIcon;
+
 public class VirtualBot implements VirtualBotConfigs, SimUtils {
     // Robot attributes
     private String drivetrain = "";
@@ -44,7 +47,7 @@ public class VirtualBot implements VirtualBotConfigs, SimUtils {
                     imagePath = "bin/ucpd_tankdrive.jpeg";
                     return;
                 case "differential":
-                    imagePath = "bin/ucpd_drivetrain.jpeg";
+                    imagePath = "bin/ucpd_drivetrain.png";
                     return;
                 default:
                     imagePath = "bin/ucpd_drivetrain.jpeg";
@@ -72,13 +75,22 @@ public class VirtualBot implements VirtualBotConfigs, SimUtils {
 
         }
 
-        icon = new ImageIcon(imagePath);
-        image = icon.getImage();
+        imageIcon = new ImageIcon(imagePath);
+        image = imageIcon.getImage();
         width = image.getWidth(null);
         height = image.getHeight(null);
     }
+    
+    public double getWidth() {
+        return width;
+    }
+    
+    public double getHeight() {
+        return height;
+    }
+    
     /*
-     * @return returns the robot image that we made
+     * @return gets the robot image path
      */
     public String getImagePath() {
         return imagePath;
@@ -130,8 +142,8 @@ public class VirtualBot implements VirtualBotConfigs, SimUtils {
                 rotate(inputAngle);
             }
             if (drivetrain == "differential") {
-                int dx = (int) Math.round(Math.cos(radians) * distance);
-                int dy = (int) Math.round(Math.sin(radians) * distance);
+                int dx = (int) Math.round(Math.cos(angle) * x);
+                int dy = (int) Math.round(Math.sin(angle) * x);
                 x += dx;
                 y += dy;
                 rotate(inputAngle);
