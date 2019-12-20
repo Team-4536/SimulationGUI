@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
 	int i = 0;
 
 	private void simulationInit() {
-	  if (simulation == null) simulation = new SimulationGUI("4536 FRC SimulatorGUI", minibot);
+	  if (simulation == null) simulation = new SimulationGUI("4536 FRC SimulatorGUI", new VirtualBot("Minibot", 4536, "differential"));
 	}
 
 	@Override
