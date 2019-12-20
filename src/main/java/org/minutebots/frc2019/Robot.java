@@ -16,79 +16,56 @@ import org.minutebots.frc2019.simulation.VirtualBot;
  * project.
  */
 public class Robot extends TimedRobot {
-  /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
-   */
+	/**
+	* This function is run when the robot is first started up and should be used
+	* for any initialization code.
+	*/
 
-  Joystick joystick = new Joystick(0);
-  SimulationGUI simulation;
-  int i = 0;
+	Joystick joystick = new Joystick(0);
+	SimulationGUI simulation;
+	int i = 0;
 
-  public boolean checkSim() {
-    if (simulation == null) {
-      try {simulation = new SimulationGUI("4536 FRC SimulatorGUI", new VirtualBot("Minibot", 4536, "differential"));}
-      catch(IOException e) {e.printStackTrace();}
-      return false;
-    } else {
-      return true;
-    }
-  }
+	private void simulationInit() {
+	  if (simulation == null) simulation = new SimulationGUI("4536 FRC SimulatorGUI", minibot);
+	}
 
-  @Override
-  public void robotInit() {
-  }
+	@Override
+	public void robotInit() {
+		simulationInit();
+	}
 
-  @Override
-  public void autonomousInit() {
-  }
+	@Override
+	public void autonomousInit() {
+	}
 
-  @Override
-  public void autonomousPeriodic() {
-  }
+	@Override
+	public void autonomousPeriodic() {
+	}
 
-  @Override
-  public void teleopInit() {
-    if (checkSim() == false) {
-      checkSim();
-    } else {
-      simulation.enableFrame();
-      simulation.getInstance();
-    }
-  }
+	@Override
+	public void teleopInit() {
+		simulation.enableFrame();
+		simulation.getInstance();
+	}
 
-  @Override
-  public void teleopPeriodic() {
-    if (checkSim() == false) {
-      checkSim();
-    } else {
-      // Make it so turning the joystick will turn the robot instead
-      simulation.rotate(joystick.getX());
-      simulation.setPosition(0, joystick.getY()*4);
-      simulation.refresh();
-    }
-  }
+	@Override
+	public void teleopPeriodic() {
+	}
 
-  @Override
-  public void testInit() {
-  }
+	@Override
+	public void testInit() {
+	}
 
-  @Override
-  public void testPeriodic() {
-  }
+	@Override
+	public void testPeriodic() {
+	}
 
-  @Override
-  public void disabledInit() {
-    if (checkSim() == false) {
-      checkSim();
-    } else {
-      simulation.disableFrame();
-    }
-  }
+	@Override
+	public void disabledInit() {
+		simulation.disableFrame();
+	}
 
-  @Override
-  public void disabledPeriodic() {
-
-  }
-
+	@Override
+	public void disabledPeriodic() {
+	}
 }
