@@ -1,0 +1,134 @@
+package org.minutebots.frc2019.simulation;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
+
+public class SimUtilities implements ActionListener {
+    private static SimUtilities instance;
+
+    private JPanel main, left, right;
+    private JFrame frame = new JFrame("MPC");
+    private JSlider slider = new JSlider(JSlider.VERTICAL, 0, 30, 15);
+    
+    private JMenuBar menuBar = new JMenuBar(); 
+    private JMenu menu = new JMenu("Menu");
+    private JMenu submenu = new JMenu("Sub Menu");
+    private JMenuItem i1, i2, i3, i4, i5;
+    
+    public SimUtilities() {}
+    
+    public void initUtilBoxes() {
+        left = new JPanel();
+        left.setLayout(new GridLayout(4, 4, 10, 10));
+        for (int i = 0; i < 16; i++) {
+            JPanel panel = new JPanel();
+            panel.setBorder(new LineBorder(Color.BLUE, 1));
+            left.add(panel);
+        }
+        
+        // Slider
+        slider.setMajorTickSpacing(10);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        
+        right = new JPanel();
+        right.setBorder(new EmptyBorder(20, 50, 20, 20));
+        right.setLayout(new BorderLayout(1, 1));
+        right.add(slider);
+
+        main = new JPanel() {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(400, 300);
+            }
+        };
+        main.setLayout(new BorderLayout());
+        main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Add the two JPanels
+        main.add(left, BorderLayout.CENTER);
+        main.add(right, BorderLayout.EAST);
+        
+        // Menu Bar
+        i1 = new JMenuItem("Item 1"); 
+        i2 = new JMenuItem("Item 2"); 
+        i3 = new JMenuItem("Item 3"); 
+        i4 = new JMenuItem("Item 4"); 
+        i5 = new JMenuItem("Item 5");
+        menu.add(i1); menu.add(i2); menu.add(i3);
+        submenu.add(i4); submenu.add(i5);
+        menu.add(submenu);
+        menuBar.add(menu);
+
+        addMenuListeners();
+        
+        frame.setJMenuBar(menuBar);
+        frame.add(main);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+    
+    public void addMenuListeners() {
+        for (int i = 0; i < menuBar.getMenuCount(); i++) {
+            JMenu m = menuBar.getMenu(i);
+            System.out.println("Menu:" + m.getText());
+            for (int j = 0; j < m.getMenuComponentCount(); j++) {
+                java.awt.Component comp = m.getMenuComponent(j);
+                if (comp instanceof JMenu) {
+                    JMenu tempMenu = (JMenu)comp;
+                    System.out.println("Menu: " + tempMenu.getText());
+                    
+                    for (int j2 = 0; j2 < tempMenu.getMenuComponentCount(); j2++) {
+                        java.awt.Component comp2 = tempMenu.getMenuComponent(j2);
+                        if (comp2 instanceof JMenu) {
+                            JMenu tempMenu2 = (JMenu)comp2;
+                            System.out.println("Menu: " + tempMenu2.getText());
+                        } else if (comp2 instanceof JMenuItem) {
+                            JMenuItem menuItem2 = (JMenuItem)comp2;
+                            menuItem2.addActionListener(this);
+                            System.out.println("MenuItem: " + menuItem2.getText());
+                        }
+                    }
+                } else if (comp instanceof JMenuItem) {
+                    JMenuItem menuItem = (JMenuItem)comp;
+                    menuItem.addActionListener(this);
+                    System.out.println("MenuItem: " + menuItem.getText());
+                }
+            }
+        }
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == i1) {
+            System.out.println("i1");
+        }
+        if(e.getSource() == i2) {
+            System.out.println("i2");
+        }
+        if(e.getSource() == i3) {
+            System.out.println("i3");
+        }
+        if(e.getSource() == i4) {
+            System.out.println("i4");
+        }
+        if(e.getSource() == i5) {
+            System.out.println("i5");
+        }
+    }
+    
+    public static void main(String... args) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            new SimUtilities().initUtilBoxes();
+        });
+    }
+    
+    public SimUtilities getInstance() {
+        if (instance == null) instance = new SimUtilities();
+        return instance;
+    }
+}

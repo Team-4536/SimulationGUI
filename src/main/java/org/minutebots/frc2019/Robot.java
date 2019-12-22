@@ -3,10 +3,9 @@ package org.minutebots.frc2019;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-import java.io.IOException;
-
 import org.minutebots.frc2019.simulation.SimulationGUI;
 import org.minutebots.frc2019.simulation.VirtualBot;
+import java.awt.EventQueue;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,10 +22,15 @@ public class Robot extends TimedRobot {
 
 	Joystick joystick = new Joystick(0);
 	SimulationGUI simulation;
-	int i = 0;
 
 	private void simulationInit() {
-	  if (simulation == null) simulation = new SimulationGUI("4536 FRC SimulatorGUI", new VirtualBot("Minibot", 4536, "differential"));
+		EventQueue.invokeLater(() -> {
+			VirtualBot minibot = new VirtualBot("Minibot", 4536, "d");
+			minibot.setSpeed(1);
+
+			final SimulationGUI simulation = new SimulationGUI(minibot);
+			simulation.setVisible(true);
+		});
 	}
 
 	@Override
@@ -44,8 +48,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		simulation.enableFrame();
-		simulation.getInstance();
 	}
 
 	@Override
@@ -62,10 +64,19 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		simulation.disableFrame();
 	}
 
 	@Override
 	public void disabledPeriodic() {
+	}
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(() -> {
+			VirtualBot minibot = new VirtualBot("Minibot", 4536, "d");
+			minibot.setSpeed(1);
+
+			final SimulationGUI simulation = new SimulationGUI(minibot);
+			simulation.setVisible(true);
+		});
 	}
 }

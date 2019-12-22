@@ -1,0 +1,135 @@
+package org.minutebots.frc2019.simulation;
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
+
+@SuppressWarnings("serial")
+public class SimUtilities implements ActionListener {
+    private static SimUtilities instance;
+
+    private JPanel mainView, leftView, rightView;
+    private JFrame frame = new JFrame("MPC");
+    private JSlider slider = new JSlider(JSlider.VERTICAL, 0, 30, 15);
+    
+    private JMenuBar menuBar = new JMenuBar(); 
+    private JMenu optionsMenu = new JMenu("Options");
+    private JMenu subMenu = new JMenu("Team Settings");
+    private JMenuItem robotPosition, robotType, teamNumber, teamName, showFeild, changeRobotSise;
+    
+    public SimUtilities() {}
+    
+    private void createMenuItems() {
+        robotPosition = new JMenuItem("Reset Robot Position"); 
+        robotType = new JMenuItem("Select Robot type");
+        teamNumber = new JMenuItem("Select Team Number");
+        changeRobotSise = new JMenuItem("Change Robot Size");
+        teamName = new JMenuItem("Set Team Name");
+        showFeild = new JMenuItem("Show Feild");
+        optionsMenu.add(robotPosition);
+        optionsMenu.add(changeRobotSise);
+        optionsMenu.add(robotType); 
+        optionsMenu.add(showFeild);
+        subMenu.add(teamName);
+        subMenu.add(teamNumber);
+        optionsMenu.add(subMenu);
+        menuBar.add(optionsMenu);
+
+        addMenuListeners();
+    }
+
+    private void createPanels() {
+        leftView = new JPanel();
+
+        // Slider
+        slider.setMajorTickSpacing(10);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+
+        rightView = new JPanel();
+        rightView.setBorder(new EmptyBorder(20, 50, 20, 20));
+        rightView.setLayout(new BorderLayout(1, 1));
+        rightView.add(slider);
+
+        mainView = new JPanel() {@Override public Dimension getPreferredSize() {return new Dimension(400, 300);}};
+        mainView.setLayout(new BorderLayout());
+        mainView.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Add the two JPanels
+        mainView.add(leftView, BorderLayout.CENTER);
+        mainView.add(rightView, BorderLayout.EAST);
+    }
+
+    private void init() {
+        createPanels();
+        createMenuItems();
+
+        frame.setJMenuBar(menuBar);
+        frame.add(mainView);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+    
+    public void addMenuListeners() {
+        for (int i = 0; i < menuBar.getMenuCount(); i++) {
+            JMenu m = menuBar.getMenu(i);
+            // System.out.println("Menu:" + m.getText());
+            for (int j = 0; j < m.getMenuComponentCount(); j++) {
+                java.awt.Component comp = m.getMenuComponent(j);
+                if (comp instanceof JMenu) {
+                    JMenu tempMenu = (JMenu)comp;
+                    // System.out.println("Menu: " + tempMenu.getText());
+                    
+                    for (int j2 = 0; j2 < tempMenu.getMenuComponentCount(); j2++) {
+                        java.awt.Component comp2 = tempMenu.getMenuComponent(j2);
+                        if (comp2 instanceof JMenu) {
+                            // JMenu tempMenu2 = (JMenu)comp2;
+                            // System.out.println("Menu: " + tempMenu2.getText());
+                        } else if (comp2 instanceof JMenuItem) {
+                            JMenuItem menuItem2 = (JMenuItem)comp2;
+                            menuItem2.addActionListener(this);
+                            // System.out.println("MenuItem: " + menuItem2.getText());
+                        }
+                    }
+                } else if (comp instanceof JMenuItem) {
+                    JMenuItem menuItem = (JMenuItem)comp;
+                    menuItem.addActionListener(this);
+                    System.out.println("MenuItem: " + menuItem.getText());
+                }
+            }
+        }
+    }
+    
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == robotPosition) {
+            System.out.println("i1");
+        }
+        if(e.getSource() == robotType) {
+            System.out.println("i2");
+        }
+        if(e.getSource() == teamNumber) {
+            System.out.println("i3");
+        }
+        if(e.getSource() == teamName) {
+            System.out.println("i4");
+        }
+        if(e.getSource() == showFeild) {
+            System.out.println("i5");
+        }
+    }
+    
+    public static void main(String... args) {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            new SimUtilities().init();
+        });
+    }
+    
+    public SimUtilities getInstance() {
+        if (instance == null) instance = new SimUtilities();
+        return instance;
+    }
+}
