@@ -15,12 +15,13 @@ import javax.swing.ImageIcon;
  */
 
 public class VirtualBot implements SimUtils {
-    private int x = 40;
-    private int y = 60;
+    private double x = 40;
+    private double y = 60;
     private int width;
     private int height;
     private double rotation = -90;
     private String drivetrain = "";
+    private double maximumSpeed;
     private double speed;
 
     private ImageIcon icon;
@@ -38,32 +39,15 @@ public class VirtualBot implements SimUtils {
      * @param driveType - This is a high demand, it is rewuired to make the robot work. It determines the drivetrain.
      */
     public VirtualBot(final String robotName, final int teamNumber, final String driveType) {
-        
         setRobotName(robotName);
         setTeamNumber(teamNumber);
-
-        if (driveType.equals("d")) {
-            imageURL = getClass().getResource("drivetrain-img-dict/New/other.jpeg"); 
-            setDrivetrain("d");
-        } else if (driveType == "t") {
-            imageURL = getClass().getResource("drivetrain-img-dict/New/tank.jpeg"); 
-            setDrivetrain("t");
-        } else if (driveType == "o") {
-            imageURL = getClass().getResource("drivetrain-img-dict/New/hdrive.jpeg"); 
-            setDrivetrain("o");
-        } else {
-            System.out.println("Please choose a drive type. Your current one is none due to fallbacks.");
-            imageURL = getClass().getResource("drivetrain-img-dict/New/drivetrain.jpeg");
-            setDrivetrain("d");
-        }
-
-        loadImage();
+        setDrivetrain(driveType);
     }
 
     private void loadImage() {
         if (imageURL != null) icon = new ImageIcon(imageURL);
         // The next two lines scale down the image
-        image = icon.getImage().getScaledInstance(icon.getImage().getWidth(null) / 3, icon.getImage().getHeight(null) / 3,  Image.SCALE_SMOOTH);
+        image = icon.getImage().getScaledInstance(icon.getImage().getWidth(null) / 6, icon.getImage().getHeight(null) / 6,  Image.SCALE_SMOOTH);
         icon = new ImageIcon(image);
 
         // we set the image to the image
@@ -84,6 +68,14 @@ public class VirtualBot implements SimUtils {
      */
     public void setLocation(final int inputX, final int inputY, final int inputZ) {
         if (drivetrain == "t") {
+            final double radians = Math.toRadians(rotation);
+            final double dx = Math.cos(radians) * inputX;
+            final double dy = Math.sin(radians) * inputX;
+            x += dx;
+            y += dy;
+            rotate(inputZ);
+        }
+        if (drivetrain == "m") {
             x += (inputX*speed);
             y += (inputY*speed);
             rotate(inputZ);
@@ -95,8 +87,8 @@ public class VirtualBot implements SimUtils {
         }
         if (drivetrain == "d") {
             final double radians = Math.toRadians(rotation);
-            final int dx = (int) Math.round(Math.cos(radians) * inputX);
-            final int dy = (int) Math.round(Math.sin(radians) * inputX);
+            final double dx = Math.cos(radians) * inputX;
+            final double dy = Math.sin(radians) * inputX;
             x += dx;
             y += dy;
             rotate(inputZ);
@@ -115,19 +107,31 @@ public class VirtualBot implements SimUtils {
 
     /**
      * Returns the current x position of the Virtual Robot.
-     * @return {@code int} X Position
+     * @return {@code double} X Position
      */
-    public int getX() {return x;}
+    public double getX() {return x;}
     /**
      * Returns the current y position of the Virtual Robot.
-     * @return {@code int} Y Position
+     * @return {@code double} Y Position
      */
-    public int getY() {return y;}
+    public double getY() {return y;}
     
     public int getWidth() {return width;}
     public int getHeight() {return height;}
 
-    public void setDrivetrain(final String driveType) {drivetrain = driveType;}
+    public void setDrivetrain(final String driveType) {
+        drivetrain = driveType;
+        if (driveType.equals("d")) imageURL = getClass().getResource("drivetrain-img-dict/New/other.jpeg"); 
+        else if (driveType == "t") imageURL = getClass().getResource("drivetrain-img-dict/New/tank.jpeg");
+        else if (driveType == "m") imageURL = getClass().getResource("drivetrain-img-dict/New/mecanum.jpeg");
+        else if (driveType == "o") imageURL = getClass().getResource("drivetrain-img-dict/New/hdrive.jpeg"); 
+        else {
+            System.out.println("Please choose a drive type. Your current one is none due to fallbacks.");
+            imageURL = getClass().getResource("drivetrain-img-dict/New/drivetrain.jpeg");
+        }
+        loadImage();
+    }
+
     public String getDrivetrain() {return drivetrain;}
     public void setTeamNumber(final int newTeamNumber) {teamNumber = newTeamNumber;}
     public int getTeamNumber() {return teamNumber;}
@@ -136,39 +140,38 @@ public class VirtualBot implements SimUtils {
     public void setRobotName(final String newName) {robotName = newName;}
     public String getRobotName() {return robotName;}
 
+    /**
+     * KeyboardBinder
+     * This void binds together controls, it replaces a USB controller for testing purposes.
+     * 
+     * Issues: the KeyEvent.VK_UP and KeyEvent.VK_DOWN are flopped for some reason, don't know 
+     * if this is supposed to be that way, but it works.
+    */
     public void keyboardBinder(final KeyEvent e) {
-        /**
-         * KeyboardBinder
-         * This void binds together controls, it replaces a USB controller for testing purposes.
-         * 
-         * Issues: the KeyEvent.VK_UP and KeyEvent.VK_DOWN are flip flopped for some reason, don't know 
-         * if this is supposed to be that way, but it works.
-        */
-
         final int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
             // rotate(-10);
-            if (drivetrain == "d") setLocation(0, 0, -10);
-            else setLocation(-5, 0, 0);
+            if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, -10);
+            if (drivetrain == "m" || drivetrain == "o") setLocation(-5, 0, 0);
         }
 
         if (key == KeyEvent.VK_RIGHT) {
             // rotate(10);
-            if (drivetrain == "d") setLocation(0, 0, 10);
-            else setLocation(5, 0, 0);
+            if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, 10);
+            if (drivetrain == "m" || drivetrain == "o") setLocation(5, 0, 0);
         }
 
         if (key == KeyEvent.VK_UP) {
             // move(5);
-            if (drivetrain == "d") setLocation(5, 0, 0);
-            else setLocation(0, -5, 0);
+            if (drivetrain == "d" || drivetrain == "t") setLocation(5, 0, 0);
+            if (drivetrain == "m" || drivetrain == "o") setLocation(0, -5, 0);
         }
 
         if (key == KeyEvent.VK_DOWN) {
             // move(-5);
-            if (drivetrain == "d") setLocation(-5, 0, 0);
-            else setLocation(0, 5, 0);
+            if (drivetrain == "d" || drivetrain == "t") setLocation(-5, 0, 0);
+            if (drivetrain == "m" || drivetrain == "o") setLocation(0, 5, 0);
         }
     }
 }

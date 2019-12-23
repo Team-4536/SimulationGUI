@@ -3,9 +3,7 @@ package org.minutebots.frc2019;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-import org.minutebots.frc2019.simulation.SimulationGUI;
-import org.minutebots.frc2019.simulation.VirtualBot;
-import java.awt.EventQueue;
+import org.minutebots.frc2019.simulation.SimulationOS;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -21,16 +19,11 @@ public class Robot extends TimedRobot {
 	*/
 
 	Joystick joystick = new Joystick(0);
-	SimulationGUI simulation;
+	org.minutebots.frc2019.simulation.SimulationGUI simulation;
 
 	private void simulationInit() {
-		EventQueue.invokeLater(() -> {
-			VirtualBot minibot = new VirtualBot("Minibot", 4536, "d");
-			minibot.setSpeed(1);
-
-			final SimulationGUI simulation = new SimulationGUI(minibot);
-			simulation.setVisible(true);
-		});
+		SimulationOS simOS = new SimulationOS("mac");
+		simulation = simOS.getSimulationInstance();
 	}
 
 	@Override
@@ -71,12 +64,6 @@ public class Robot extends TimedRobot {
 	}
 
 	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> {
-			VirtualBot minibot = new VirtualBot("Minibot", 4536, "d");
-			minibot.setSpeed(1);
-
-			final SimulationGUI simulation = new SimulationGUI(minibot);
-			simulation.setVisible(true);
-		});
+		new SimulationOS("mac");
 	}
 }

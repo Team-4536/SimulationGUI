@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.Taskbar;
 
 /**
  * @author Ridley Nelson
@@ -21,21 +22,31 @@ import java.awt.event.KeyEvent;
 @SuppressWarnings("serial")
 public class SimulationGUI extends JFrame implements ActionListener {
     private VirtualBot robot;
-    private JMenuBar menuBar = new JMenuBar(); 
-    private JMenu optionsMenu = new JMenu("Options");
-    private JMenu subMenu = new JMenu("Team Settings");
-    private JMenuItem robotPositionSet, robotTypeSet, teamNumberSet, teamNameSet, showFeild, changeRobotSize;
-    private JLabel teamNumber, robotType;
+    private JMenuBar menuBar = new JMenuBar();
+    private JMenu optionsMenu = new JMenu("Options"), subMenu = new JMenu("Team Settings"),
+            viewMenu = new JMenu("View");
+    private JMenuItem robotPosition = new JMenuItem("Reset Robot Position"),
+            robotType = new JMenuItem("Select Robot type"), teamNumber = new JMenuItem("Select Team Number"),
+            teamName = new JMenuItem("Set Team Name"), showFeild = new JMenuItem("Show Feild"),
+            changeRobotSize = new JMenuItem("Change Robot Size"),
+            simulationGridView = new JMenuItem("Simulation Grid View");
+
+    private JLabel teamNumberLabel, robotTypeLabel, robotPositionLabel;
 
     public SimulationGUI(VirtualBot inputRobot) {
         initUI(inputRobot);
         robot = inputRobot;
     }
-    
+
     private void initUI(VirtualBot inputRobot) {
         add(new SimulationViewDisplay(inputRobot));
-
+        
         setTitle("Simulation GUI");
+        Taskbar taskbar = Taskbar.getTaskbar();
+        try {
+            taskbar.setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
+        } catch (final UnsupportedOperationException e) {} catch (final SecurityException e) {}
+
         setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
         setSize(900, 600);
         createMenuItems();
@@ -46,20 +57,17 @@ public class SimulationGUI extends JFrame implements ActionListener {
     }
 
     private void createMenuItems() {
-        robotPositionSet = new JMenuItem("Reset Robot Position"); 
-        robotTypeSet = new JMenuItem("Select Robot type"); 
-        teamNumberSet = new JMenuItem("Select Team Number"); 
-        changeRobotSize = new JMenuItem("Change Robot Size"); 
-        teamNameSet = new JMenuItem("Set Team Name"); 
-        showFeild = new JMenuItem("Show Feild");
-        
-        teamNumber = new JLabel("     Team Number: 0000");
-        robotType = new JLabel("     Drivetrain: ");
+        teamNumberLabel = new JLabel("     Team Number: 0000");
+        robotTypeLabel = new JLabel("     Drivetrain: differential");
+        robotPositionLabel = new JLabel("     X: 0, Y: 0, Z: 0");
 
-        optionsMenu.add(robotPositionSet); optionsMenu.add(changeRobotSize); optionsMenu.add(robotTypeSet); optionsMenu.add(showFeild); optionsMenu.add(subMenu);
-        robotPositionSet.setMnemonic(KeyEvent.VK_R);
-        subMenu.add(teamNameSet); subMenu.add(teamNumberSet); subMenu.add(teamNumber); subMenu.add(robotType);
-        menuBar.add(optionsMenu);
+        // View
+        viewMenu.add(simulationGridView);
+
+        optionsMenu.add(robotPosition); optionsMenu.add(changeRobotSize); optionsMenu.add(robotType); optionsMenu.add(showFeild); optionsMenu.add(subMenu);
+        robotPosition.setMnemonic(KeyEvent.VK_R);
+        subMenu.add(teamName); subMenu.add(teamNumber); subMenu.add(teamNumberLabel); subMenu.add(robotTypeLabel); subMenu.add(robotPositionLabel);
+        menuBar.add(optionsMenu); menuBar.add(viewMenu);
 
         addMenuListeners();
     }
@@ -105,7 +113,7 @@ public class SimulationGUI extends JFrame implements ActionListener {
      * @return the user input, should be 4 digits (numbers).
      */
     private String showTeamNumberInput(JFrame parent, String message, Integer toBeValue) {
-        String input = JOptionPane.showInputDialog(parent, message, null);
+        String input = (String)JOptionPane.showInputDialog(parent, message, null);
         if (input.length() != toBeValue) showTeamNumberInput(parent, message, toBeValue);
         return input;
     }
@@ -128,8 +136,8 @@ public class SimulationGUI extends JFrame implements ActionListener {
         JButton submit = new JButton("Done");
         submit.setBounds(5, 90, 60, 40);
 
-        String options[] = {"differential","omni","tank"};
-        final JComboBox comboBox = new JComboBox(options);
+        String options[] = {"Differential","Omni","Tank","Mecanum"};
+        final JComboBox<String> comboBox = new JComboBox<String>(options);
         comboBox.setBounds(5,60,240,25);
 
         frame.add(submit); frame.add(label); frame.add(comboBox);
@@ -137,10 +145,11 @@ public class SimulationGUI extends JFrame implements ActionListener {
         submit.addActionListener(new ActionListener() {  
             public void actionPerformed(ActionEvent e) {       
                 String data = (String)comboBox.getItemAt(comboBox.getSelectedIndex());  
-                if (data == "differential") robot.setDrivetrain("d");
-                if (data == "omni") robot.setDrivetrain("o");
-                if (data == "tank") robot.setDrivetrain("t");
-                robotType.setText("     Drivetrain: " + data);
+                if (data == "Differential") robot.setDrivetrain("d");
+                if (data == "Omni") robot.setDrivetrain("o");
+                if (data == "Tank") robot.setDrivetrain("t");
+                if (data == "Mecanum") robot.setDrivetrain("m");
+                robotTypeLabel.setText("     Drivetrain: " + data);
                 frame.dispose();
             }
         });
@@ -148,21 +157,21 @@ public class SimulationGUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == robotPositionSet) {
+        if (e.getSource() == robotPosition) {
         }
-        if (e.getSource() == robotTypeSet) {
+        if (e.getSource() == robotType) {
             final JFrame parent = new JFrame();
             parent.setVisible(false);
             showDriveChangeInput(parent, "What would you like your new drivetrain to be? [d, o, t]");
         }
-        if (e.getSource() == teamNumberSet) {
+        if (e.getSource() == teamNumber) {
             final JFrame parent = new JFrame();
             parent.setVisible(false);
             String number = showTeamNumberInput(parent, "What is your 4 digit team number?", 4);
             robot.setTeamNumber(Integer.parseInt(number));
-            teamNumber.setText("     Team Number: " + robot.getTeamNumber());
+            teamNumberLabel.setText("     Team Number: " + robot.getTeamNumber());
         }
-        if (e.getSource() == teamNameSet) {
+        if (e.getSource() == teamName) {
 
         }
         if (e.getSource() == showFeild) {
