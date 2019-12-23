@@ -15,12 +15,12 @@ import javax.swing.ImageIcon;
  */
 
 public class VirtualBot implements SimUtils {
-    private double x = 40;
-    private double y = 60;
+    private double x = 100;
+    private double y = 100;
     private int width;
     private int height;
     private double rotation = -90;
-    private String drivetrain = "";
+    private String drivetrain;
     private double maximumSpeed;
     private double speed;
 
@@ -103,6 +103,7 @@ public class VirtualBot implements SimUtils {
      */
     public double getAngle() {return rotation;}
     
+    public void setMaximumSpeed(final double newSpeed) {maximumSpeed = newSpeed;}
     public void setSpeed(final int newSpeed) {speed = newSpeed;}
 
     /**

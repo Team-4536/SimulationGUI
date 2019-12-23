@@ -20,7 +20,7 @@ import java.awt.Taskbar;
  */
 
 @SuppressWarnings("serial")
-public class SimulationGUI extends JFrame implements ActionListener {
+public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
     private VirtualBot robot;
     private JMenuBar menuBar = new JMenuBar();
     private JMenu optionsMenu = new JMenu("Options"), subMenu = new JMenu("Team Settings"),
@@ -43,8 +43,7 @@ public class SimulationGUI extends JFrame implements ActionListener {
         
         setTitle("Simulation GUI");
         Taskbar taskbar = Taskbar.getTaskbar();
-        try {
-            taskbar.setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
+        try {taskbar.setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
         } catch (final UnsupportedOperationException e) {} catch (final SecurityException e) {}
 
         setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
@@ -78,28 +77,28 @@ public class SimulationGUI extends JFrame implements ActionListener {
     private void addMenuListeners() {
         for (int i = 0; i < menuBar.getMenuCount(); i++) {
             JMenu m = menuBar.getMenu(i);
-            // System.out.println("Menu:" + m.getText());
+            if (testMode) System.out.println("Menu:" + m.getText());
             for (int j = 0; j < m.getMenuComponentCount(); j++) {
                 java.awt.Component comp = m.getMenuComponent(j);
                 if (comp instanceof JMenu) {
                     JMenu tempMenu = (JMenu)comp;
-                    // System.out.println("Menu: " + tempMenu.getText());
+                    if (testMode) System.out.println("Menu: " + tempMenu.getText());
                     
                     for (int j2 = 0; j2 < tempMenu.getMenuComponentCount(); j2++) {
                         java.awt.Component comp2 = tempMenu.getMenuComponent(j2);
                         if (comp2 instanceof JMenu) {
-                            // JMenu tempMenu2 = (JMenu)comp2;
-                            // System.out.println("Menu: " + tempMenu2.getText());
+                            JMenu tempMenu2 = (JMenu)comp2;
+                            if (testMode) System.out.println("Menu: " + tempMenu2.getText());
                         } else if (comp2 instanceof JMenuItem) {
                             JMenuItem menuItem2 = (JMenuItem)comp2;
                             menuItem2.addActionListener(this);
-                            // System.out.println("MenuItem: " + menuItem2.getText());
+                            if (testMode) System.out.println("MenuItem: " + menuItem2.getText());
                         }
                     }
                 } else if (comp instanceof JMenuItem) {
                     JMenuItem menuItem = (JMenuItem)comp;
                     menuItem.addActionListener(this);
-                    System.out.println("MenuItem: " + menuItem.getText());
+                    if (testMode) System.out.println("MenuItem: " + menuItem.getText());
                 }
             }
         }
@@ -149,7 +148,9 @@ public class SimulationGUI extends JFrame implements ActionListener {
                 if (data == "Omni") robot.setDrivetrain("o");
                 if (data == "Tank") robot.setDrivetrain("t");
                 if (data == "Mecanum") robot.setDrivetrain("m");
-                robotTypeLabel.setText("     Drivetrain: " + data);
+                
+                if (SimulationOS.getOs() == "mac") robotType.setText("Change Robot Type: " + data);
+                else robotTypeLabel.setText("     Drivetrain: " + data);
                 frame.dispose();
             }
         });
@@ -169,7 +170,8 @@ public class SimulationGUI extends JFrame implements ActionListener {
             parent.setVisible(false);
             String number = showTeamNumberInput(parent, "What is your 4 digit team number?", 4);
             robot.setTeamNumber(Integer.parseInt(number));
-            teamNumberLabel.setText("     Team Number: " + robot.getTeamNumber());
+            if (SimulationOS.getOs() == "mac") teamNumber.setText("Change Team Number: " + robot.getTeamNumber());
+            else teamNumberLabel.setText("     Team Number: " + robot.getTeamNumber());
         }
         if (e.getSource() == teamName) {
 
