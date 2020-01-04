@@ -95,11 +95,16 @@ public class VirtualBot implements SimUtils {
         }
     }
 
-    public void rotate(final double inputAngle) {rotation += inputAngle;}
+    /**
+     * Updates the robot's rotation given the input rotation.
+     * @param input - {@code double} the amount the robot should turn (clockwise).
+     * @since v1
+     */
+    public void rotate(final double input) {rotation += input;}
     
     /**
      * Returns the current angle in which the Virtual Robot is facing.
-     * @return {@code double} rotation (probably in radians)
+     * @return {@code double} the most recent rotation.
      */
     public double getAngle() {return rotation;}
     
@@ -109,11 +114,14 @@ public class VirtualBot implements SimUtils {
     /**
      * Returns the current x position of the Virtual Robot.
      * @return {@code double} X Position
+     * @since v1
      */
     public double getX() {return x;}
+    
     /**
      * Returns the current y position of the Virtual Robot.
      * @return {@code double} Y Position
+     * @since v1
      */
     public double getY() {return y;}
     
@@ -145,7 +153,7 @@ public class VirtualBot implements SimUtils {
      * KeyboardBinder
      * This void binds together controls, it replaces a USB controller for testing purposes.
      * 
-     * Issues: the KeyEvent.VK_UP and KeyEvent.VK_DOWN are flopped for some reason, don't know 
+     * @apiNote The {@code KeyEvent.VK_UP} and {@code KeyEvent.VK_DOWN} are flopped for some reason, don't know 
      * if this is supposed to be that way, but it works.
     */
     public void keyboardBinder(final KeyEvent e) {

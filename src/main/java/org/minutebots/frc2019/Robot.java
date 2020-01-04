@@ -22,7 +22,7 @@ public class Robot extends TimedRobot {
 	org.minutebots.frc2019.simulation.SimulationGUI simulation;
 
 	private void simulationInit() {
-		SimulationOS simOS = new SimulationOS("mac");
+		SimulationOS simOS = new SimulationOS("mac"); // replace "mac" with "windows" for Windows 10
 		simulation = simOS.getSimulationInstance();
 	}
 

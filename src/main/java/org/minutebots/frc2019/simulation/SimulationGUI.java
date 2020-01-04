@@ -15,13 +15,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.Taskbar;
 
-/**
- * @author Ridley Nelson
- */
-
 @SuppressWarnings("serial")
 public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
     private VirtualBot robot;
+    private VirtualBot[] robots;
+
     private JMenuBar menuBar = new JMenuBar();
     private JMenu optionsMenu = new JMenu("Options"), subMenu = new JMenu("Team Settings"),
             viewMenu = new JMenu("View");
@@ -32,7 +30,7 @@ public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
             simulationGridView = new JMenuItem("Simulation Grid View");
 
     private JLabel teamNumberLabel, robotTypeLabel, robotPositionLabel;
-
+    
     public SimulationGUI(VirtualBot inputRobot) {
         initUI(inputRobot);
         robot = inputRobot;

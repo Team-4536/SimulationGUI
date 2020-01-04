@@ -8,6 +8,13 @@ public class SimulationOS implements SimUtils {
     private SimulationGUI simulation;
     private static String definiteOS;
 
+    /**
+     * Creates a {@code SimulationOS} and a {@code SimulationGUI} object which can be retreived by {@code getSimulationInstance()}.
+     * @param os - The operating system name in which the simulation is going to be on. Current options are {@code windows} or {@code mac}.
+     * @since v3
+     * @see #getSimulationInstance()
+     * @see #getOs()
+     */
     public SimulationOS(String os) {
         definiteOS = os;
         if (os == "mac") {
@@ -47,10 +54,20 @@ public class SimulationOS implements SimUtils {
 		});
     }
 
+    /**
+     * Returns the OS initially set.
+     * @return {@code String} the OS set.
+     * @since v3
+     */
     public static String getOs() {
         return definiteOS;
     }
 
+    /**
+     * Returns a SimulationGUI object.
+     * @return SimulationGUI
+     * @since v3
+     */
     public SimulationGUI getSimulationInstance() {
         return simulation;
     }
