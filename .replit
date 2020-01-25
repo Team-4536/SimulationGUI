@@ -1,0 +1,2 @@
+language = "java_swing",
+run = "java src/main/or.minutebots/frc2019.robot/Robot.java"

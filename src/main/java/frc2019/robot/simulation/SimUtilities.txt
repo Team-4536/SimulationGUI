@@ -1,4 +1,4 @@
-package org.minutebots.frc2019.simulation;
+package frc2019.robot.simulation;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -1,4 +1,4 @@
-package org.minutebots.frc2019.simulation;
+package frc2019.robot.simulation;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -21,14 +21,16 @@ public class SimulationViewDisplay extends JPanel implements ActionListener {
     private Timer timer;
     private VirtualBot robot;
     private final int DELAY = 10;
+    private boolean useKeyboard = false;
 
-    public SimulationViewDisplay(VirtualBot inputRobot) {
+    public SimulationViewDisplay(VirtualBot inputRobot, boolean useKeyboard) {
         robot = inputRobot;
+        this.useKeyboard = useKeyboard;
         initBoard();
     }
 
     private void initBoard() {
-        addKeyListener(new KeyboardBinder());
+        if (useKeyboard) addKeyListener(new KeyboardBinder());
         setBackground(Color.WHITE);
         setFocusable(true);
 

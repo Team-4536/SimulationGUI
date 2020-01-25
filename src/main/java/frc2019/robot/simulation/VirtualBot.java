@@ -1,9 +1,14 @@
-package org.minutebots.frc2019.simulation;
+package frc2019.robot.simulation;
 
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import javax.swing.ImageIcon;
+import edu.wpi.first.wpilibj.Joystick;
+import frc2019.lib.VirtualMotor;
+
 
 /**
  * VirtualBot
@@ -15,23 +20,16 @@ import javax.swing.ImageIcon;
  */
 
 public class VirtualBot implements SimUtils {
-    private double x = 100;
-    private double y = 100;
-    private int width;
-    private int height;
-    private double rotation = -90;
-    private String drivetrain;
-    private double maximumSpeed;
-    private double speed;
+    private double x = 100, y = 100, lastX = 100, lastY = 100;
+    private int width, height, teamNumber;
+    private double lastRotation, rotation = -90; // we set this so this is facing upwards
+    private String drivetrain, teamName = "", robotName = "";
+    private double maximumSpeed, speed;
 
     private ImageIcon icon;
     private Image image;
     private URL imageURL;
-
-    // Team and Misc attributes
-    private int teamNumber;
-    private String teamName = "";
-    private String robotName = "";
+    private SimMotors motors = new SimMotors();
 
     /**
      * @param robotName - This is just the robot's name, it CAN be left empty.
@@ -42,6 +40,18 @@ public class VirtualBot implements SimUtils {
         setRobotName(robotName);
         setTeamNumber(teamNumber);
         setDrivetrain(driveType);
+
+        try {
+            motors.addMotor(new VirtualMotor("Neo Spark MAX 1", 1));
+            motors.addMotor(new VirtualMotor("Neo Spark MAX 2", 2));
+            motors.addMotor(new VirtualMotor("Neo Spark MAX 3", 3));
+            motors.addMotor(new VirtualMotor("Neo Spark MAX 4", 4));
+
+
+            System.out.println("Motor Arr size: " + motors.size());
+        } catch(NoSuchElementException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadImage() {
@@ -57,8 +67,10 @@ public class VirtualBot implements SimUtils {
         height = image.getHeight(null);
         width = image.getWidth(null);
     }
-
-    public Image getImage() {return image;}
+    
+    public Image getImage() {
+        return image;
+    }
 
     /**
      * Updates the Virtual Robot's position using 2 or 3 inputs.
@@ -71,16 +83,19 @@ public class VirtualBot implements SimUtils {
             final double radians = Math.toRadians(rotation);
             final double dx = Math.cos(radians) * inputX;
             final double dy = Math.sin(radians) * inputX;
+            lastX = x; lastY = y;
             x += dx;
             y += dy;
             rotate(inputZ);
         }
         if (drivetrain == "m") {
+            lastX = x; lastY = y;
             x += (inputX*speed);
             y += (inputY*speed);
             rotate(inputZ);
         }
-        if (drivetrain == "o") {
+        if (drivetrain == "2x2") {
+            lastX = x; lastY = y;
             x += (inputX*speed);
             y += (inputY*speed);
             rotate(inputZ);
@@ -89,6 +104,7 @@ public class VirtualBot implements SimUtils {
             final double radians = Math.toRadians(rotation);
             final double dx = Math.cos(radians) * inputX;
             final double dy = Math.sin(radians) * inputX;
+            lastX = x; lastY = y;
             x += dx;
             y += dy;
             rotate(inputZ);
@@ -100,13 +116,17 @@ public class VirtualBot implements SimUtils {
      * @param input - {@code double} the amount the robot should turn (clockwise).
      * @since v1
      */
-    public void rotate(final double input) {rotation += input;}
+    public void rotate(final double input) {
+        rotation += input;
+    }
     
     /**
      * Returns the current angle in which the Virtual Robot is facing.
      * @return {@code double} the most recent rotation.
      */
-    public double getAngle() {return rotation;}
+    public double getAngle() {
+        return rotation;
+    }
     
     public void setMaximumSpeed(final double newSpeed) {maximumSpeed = newSpeed;}
     public void setSpeed(final int newSpeed) {speed = newSpeed;}
@@ -133,7 +153,7 @@ public class VirtualBot implements SimUtils {
         if (driveType.equals("d")) imageURL = getClass().getResource("drivetrain-img-dict/New/other.jpeg"); 
         else if (driveType == "t") imageURL = getClass().getResource("drivetrain-img-dict/New/tank.jpeg");
         else if (driveType == "m") imageURL = getClass().getResource("drivetrain-img-dict/New/mecanum.jpeg");
-        else if (driveType == "o") imageURL = getClass().getResource("drivetrain-img-dict/New/hdrive.jpeg"); 
+        else if (driveType == "2x2") imageURL = getClass().getResource("drivetrain-img-dict/New/2x2.jpeg"); 
         else {
             System.out.println("Please choose a drive type. Your current one is none due to fallbacks.");
             imageURL = getClass().getResource("drivetrain-img-dict/New/drivetrain.jpeg");
@@ -149,6 +169,14 @@ public class VirtualBot implements SimUtils {
     public void setRobotName(final String newName) {robotName = newName;}
     public String getRobotName() {return robotName;}
 
+    // test thing to interact with virtual motors
+    public void interactWithMotor(int input) {
+        VirtualMotor m = motors.get(0);
+        System.out.println("Motor: " + m.getName());
+        m.set(m.get() + input);
+        System.out.println(m.get());
+    }
+
     /**
      * KeyboardBinder
      * This void binds together controls, it replaces a USB controller for testing purposes.
@@ -162,25 +190,47 @@ public class VirtualBot implements SimUtils {
         if (key == KeyEvent.VK_LEFT) {
             // rotate(-10);
             if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, -10);
-            if (drivetrain == "m" || drivetrain == "o") setLocation(-5, 0, 0);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation(-5, 0, 0);
+            interactWithMotor(-5);
         }
 
         if (key == KeyEvent.VK_RIGHT) {
             // rotate(10);
             if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, 10);
-            if (drivetrain == "m" || drivetrain == "o") setLocation(5, 0, 0);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation(5, 0, 0);
+            interactWithMotor(5);
         }
 
         if (key == KeyEvent.VK_UP) {
             // move(5);
             if (drivetrain == "d" || drivetrain == "t") setLocation(5, 0, 0);
-            if (drivetrain == "m" || drivetrain == "o") setLocation(0, -5, 0);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation(0, -5, 0);
         }
 
         if (key == KeyEvent.VK_DOWN) {
             // move(-5);
             if (drivetrain == "d" || drivetrain == "t") setLocation(-5, 0, 0);
-            if (drivetrain == "m" || drivetrain == "o") setLocation(0, 5, 0);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation(0, 5, 0);
+        }
+    }
+
+    public void joystickInput(Joystick controlStick) {
+        double controlStickX = controlStick.getX(), controlStickY = controlStick.getY();
+        if (controlStickX < 0) {
+            if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, (int)controlStickX * 2);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation((int)controlStickX, 0, 0);
+        }
+        if (controlStickX > 0) {
+            if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, (int)controlStickX * 2);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation((int)controlStickX, 0, 0);
+        }
+        if (controlStickY < 0) {
+            if (drivetrain == "d" || drivetrain == "t") setLocation((int)controlStickY, 0, 0);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation(0, (int)controlStickY, 0);
+        }
+        if (controlStickY > 0) {
+            if (drivetrain == "d" || drivetrain == "t") setLocation((int)controlStickY, 0, 0);
+            if (drivetrain == "m" || drivetrain == "2x2") setLocation(0, (int)controlStickY, 0);
         }
     }
 }

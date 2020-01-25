@@ -1,4 +1,4 @@
-package org.minutebots.frc2019.simulation;
+package frc2019.robot.simulation;
 
 import java.awt.Color;
 import javax.swing.JFrame;
@@ -18,10 +18,9 @@ import java.awt.Taskbar;
 @SuppressWarnings("serial")
 public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
     private VirtualBot robot;
-    private VirtualBot[] robots;
-
+    
     private JMenuBar menuBar = new JMenuBar();
-    private JMenu optionsMenu = new JMenu("Options"), subMenu = new JMenu("Team Settings"),
+    private JMenu optionsMenu = new JMenu("Options"), subMenu = new JMenu("Team Settings"), 
             viewMenu = new JMenu("View");
     private JMenuItem robotPosition = new JMenuItem("Reset Robot Position"),
             robotType = new JMenuItem("Select Robot type"), teamNumber = new JMenuItem("Select Team Number"),
@@ -32,22 +31,24 @@ public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
     private JLabel teamNumberLabel, robotTypeLabel, robotPositionLabel;
     
     public SimulationGUI(VirtualBot inputRobot) {
-        initUI(inputRobot);
+        initUI(inputRobot, false);
+    }
+
+    public SimulationGUI(VirtualBot inputRobot, boolean useKeyboard) {
+        initUI(inputRobot, useKeyboard);
         robot = inputRobot;
     }
 
-    private void initUI(VirtualBot inputRobot) {
-        add(new SimulationViewDisplay(inputRobot));
-        
-        setTitle("Simulation GUI");
-        Taskbar taskbar = Taskbar.getTaskbar();
+    private void initUI(VirtualBot inputRobot, boolean useKeyboard) {
+        add(new SimulationViewDisplay(inputRobot, useKeyboard)); // add the main display
+        setTitle("Simulation GUI"); // set the title
+        Taskbar taskbar = Taskbar.getTaskbar(); // set the task bar to the system's task bar
         try {taskbar.setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
         } catch (final UnsupportedOperationException e) {} catch (final SecurityException e) {}
-
-        setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
-        setSize(900, 600);
-        createMenuItems();
-        setJMenuBar(menuBar);
+        setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage()); // set the icon image
+        setSize(900, 600); // set the size of the display
+        createMenuItems(); // create the menu items
+        setJMenuBar(menuBar); // set the menu bar
         setLocationRelativeTo(null);
         setBackground(Color.WHITE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

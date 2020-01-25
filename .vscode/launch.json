@@ -8,14 +8,14 @@
             "type": "java",
             "name": "CodeLens (Launch) - SimUtilities",
             "request": "launch",
-            "mainClass": "org.minutebots.frc2019.simulation.SimUtilities",
+            "mainClass": "frc2019.robot.simulation.SimUtilities",
             "projectName": "SimulationGUI"
         },
         {
             "type": "java",
             "name": "CodeLens (Launch) - Robot",
             "request": "launch",
-            "mainClass": "org.minutebots.frc2019.Robot",
+            "mainClass": "frc2019.robot.Robot",
             "projectName": "SimulationGUI"
         },
         {
@@ -28,7 +28,7 @@
             "type": "java",
             "name": "Debug (Launch)-Main<SimulationGUI>",
             "request": "launch",
-            "mainClass": "org.minutebots.frc2019.Main",
+            "mainClass": "frc2019.robot.Main",
             "projectName": "SimulationGUI"
         }
     ]
