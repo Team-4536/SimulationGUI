@@ -3,7 +3,8 @@ package frc2019.robot.simulation;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.swing.ImageIcon;
 import edu.wpi.first.wpilibj.Joystick;
@@ -170,13 +171,37 @@ public class VirtualBot implements SimUtils {
     public String getRobotName() {return robotName;}
 
     // test thing to interact with virtual motors
-    public void interactWithMotor(int input) {
-        VirtualMotor m = motors.get(0);
-        System.out.println("Motor: " + m.getName());
-        m.set(m.get() + input);
-        System.out.println(m.get());
+    public void horizontallyTurnMotors(int input) {
+        for (int m = 0; m <= (motors.size() - 1); m++) {
+            VirtualMotor motor = motors.get(m);
+            if (motor.getPort() == 1 || motor.getPort() == 3) {
+                motor.set(motor.get() + input);
+                System.out.println("Spinning Motor +: " + motor.getName() + ": " + motor.get());
+            }
+            if (motor.getPort() == 2 || motor.getPort() == 4) {
+                motor.set(motor.get() - input);
+                System.out.println("Spinning Motor -: " + motor.getName() + ": " + motor.get());
+            }
+        }
     }
 
+    public void verticallyTurnMotors(int input) {
+        System.out.println(motors.size());
+        for (int m = 0; m <= (motors.size() - 1); m++) {
+            VirtualMotor motor = motors.get(m);
+            motor.set(motor.get() + input);
+            System.out.println("Spinning Motor: " + motor.getName() + ": " + motor.get());
+        }
+    }
+
+    public Map getVMotorData() {
+        Map tempMotorArr = new Hashtable();
+        for (int m = 0; m <= (motors.size() - 1); m++) {
+            VirtualMotor motor = motors.get(m);
+            tempMotorArr.put(motor.getName(), motor.getPort() + ", " + motor.get());
+        }
+        return tempMotorArr;
+    }
     /**
      * KeyboardBinder
      * This void binds together controls, it replaces a USB controller for testing purposes.
@@ -191,26 +216,28 @@ public class VirtualBot implements SimUtils {
             // rotate(-10);
             if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, -10);
             if (drivetrain == "m" || drivetrain == "2x2") setLocation(-5, 0, 0);
-            interactWithMotor(-5);
+            horizontallyTurnMotors(-5);
         }
 
         if (key == KeyEvent.VK_RIGHT) {
             // rotate(10);
             if (drivetrain == "d" || drivetrain == "t") setLocation(0, 0, 10);
             if (drivetrain == "m" || drivetrain == "2x2") setLocation(5, 0, 0);
-            interactWithMotor(5);
+            horizontallyTurnMotors(5);
         }
 
         if (key == KeyEvent.VK_UP) {
             // move(5);
             if (drivetrain == "d" || drivetrain == "t") setLocation(5, 0, 0);
             if (drivetrain == "m" || drivetrain == "2x2") setLocation(0, -5, 0);
+            verticallyTurnMotors(5);
         }
 
         if (key == KeyEvent.VK_DOWN) {
             // move(-5);
             if (drivetrain == "d" || drivetrain == "t") setLocation(-5, 0, 0);
             if (drivetrain == "m" || drivetrain == "2x2") setLocation(0, 5, 0);
+            verticallyTurnMotors(-5);
         }
     }
 

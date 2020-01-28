@@ -22,7 +22,7 @@ public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
     private JMenuBar menuBar = new JMenuBar();
     private JMenu optionsMenu = new JMenu("Options"), subMenu = new JMenu("Team Settings"), 
             viewMenu = new JMenu("View");
-    private JMenuItem robotPosition = new JMenuItem("Reset Robot Position"),
+    private JMenuItem robotPosition = new JMenuItem("Show Robot Position"),
             robotType = new JMenuItem("Select Robot type"), teamNumber = new JMenuItem("Select Team Number"),
             teamName = new JMenuItem("Set Team Name"), showFeild = new JMenuItem("Show Feild"),
             changeRobotSize = new JMenuItem("Change Robot Size"),
@@ -158,6 +158,7 @@ public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == robotPosition) {
+            new MotorView(robot).setVisible(true);;
         }
         if (e.getSource() == robotType) {
             final JFrame parent = new JFrame();
