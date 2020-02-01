@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 
 public class VirtualMotor implements SpeedController, Sendable {
-
     private int port;
     private double speed = 0;
+    private double maximumAcceleration = 80;
     private boolean inverted = false;
     private String name, subsystem = "";
 
@@ -32,6 +32,10 @@ public class VirtualMotor implements SpeedController, Sendable {
     @Override
     public double get() {
         return speed;
+    }
+
+    public double getMaximumAcceleration() {
+        return maximumAcceleration;
     }
 
     public int getPort() {

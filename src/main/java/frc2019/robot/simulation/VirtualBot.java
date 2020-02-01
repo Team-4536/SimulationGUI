@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.swing.ImageIcon;
 import edu.wpi.first.wpilibj.Joystick;
+import frc2019.lib.NEOSmartMotor;
 import frc2019.lib.VirtualMotor;
 
 
@@ -42,12 +43,12 @@ public class VirtualBot implements SimUtils {
         setTeamNumber(teamNumber);
         setDrivetrain(driveType);
 
+        // Vertigo: using SPARKS: 8 meters/second
         try {
-            motors.addMotor(new VirtualMotor("Neo Spark MAX 1", 1));
-            motors.addMotor(new VirtualMotor("Neo Spark MAX 2", 2));
-            motors.addMotor(new VirtualMotor("Neo Spark MAX 3", 3));
-            motors.addMotor(new VirtualMotor("Neo Spark MAX 4", 4));
-
+            motors.addMotor(new VirtualMotor("Virtual Motor 1", 1));
+            motors.addMotor(new VirtualMotor("Virtual Motor 2", 2));
+            motors.addMotor(new VirtualMotor("Virtual Motor 3", 3));
+            motors.addMotor(new VirtualMotor("Virtual Motor 4", 4));
 
             System.out.println("Motor Arr size: " + motors.size());
         } catch(NoSuchElementException e) {
@@ -173,14 +174,18 @@ public class VirtualBot implements SimUtils {
     // test thing to interact with virtual motors
     public void horizontallyTurnMotors(int input) {
         for (int m = 0; m <= (motors.size() - 1); m++) {
-            VirtualMotor motor = motors.get(m);
-            if (motor.getPort() == 1 || motor.getPort() == 3) {
-                motor.set(motor.get() + input);
-                System.out.println("Spinning Motor +: " + motor.getName() + ": " + motor.get());
-            }
-            if (motor.getPort() == 2 || motor.getPort() == 4) {
-                motor.set(motor.get() - input);
-                System.out.println("Spinning Motor -: " + motor.getName() + ": " + motor.get());
+            if (motors.get(m) instanceof VirtualMotor) {
+                VirtualMotor motor = (VirtualMotor) motors.get(m);
+                if (motor.getPort() == 1 && motor.getMaximumAcceleration() > motor.get() || motor.getPort() == 3 && motor.getMaximumAcceleration() > motor.get()) {
+                    motor.set(motor.get() + input);
+                    System.out.println("Spinning Motor +: " + motor.getName() + ": " + motor.get());
+                }
+                if (motor.getPort() == 2 && -motor.getMaximumAcceleration() > motor.get() || motor.getPort() == 4 && -motor.getMaximumAcceleration() > motor.get()) {
+                    motor.set(motor.get() - input);
+                    System.out.println("Spinning Motor -: " + motor.getName() + ": " + motor.get());
+                }
+            } else if (motors.get(m) instanceof NEOSmartMotor) {
+                // TODO: fill in here
             }
         }
     }
@@ -188,20 +193,31 @@ public class VirtualBot implements SimUtils {
     public void verticallyTurnMotors(int input) {
         System.out.println(motors.size());
         for (int m = 0; m <= (motors.size() - 1); m++) {
-            VirtualMotor motor = motors.get(m);
-            motor.set(motor.get() + input);
-            System.out.println("Spinning Motor: " + motor.getName() + ": " + motor.get());
+            if (motors.get(m) instanceof VirtualMotor) {
+                VirtualMotor motor = (VirtualMotor) motors.get(m);
+                if (motor.getMaximumAcceleration() >= motor.get()) {
+                    motor.set(motor.get() + input);
+                    System.out.println("Spinning Motor: " + motor.getName() + ": " + motor.get());
+                }
+            } else if (motors.get(m) instanceof NEOSmartMotor) {
+                // TODO: fill in here
+            }
         }
     }
 
     public Map getVMotorData() {
         Map tempMotorArr = new Hashtable();
         for (int m = 0; m <= (motors.size() - 1); m++) {
-            VirtualMotor motor = motors.get(m);
-            tempMotorArr.put(motor.getName(), motor.getPort() + ", " + motor.get());
+            if (motors.get(m) instanceof VirtualMotor) {
+                VirtualMotor motor = (VirtualMotor) motors.get(m);
+                tempMotorArr.put(motor.getName(), motor.getPort() + ", " + motor.get());
+            } else if (motors.get(m) instanceof NEOSmartMotor) {
+                // TODO: fill in here
+            }
         }
         return tempMotorArr;
     }
+
     /**
      * KeyboardBinder
      * This void binds together controls, it replaces a USB controller for testing purposes.
