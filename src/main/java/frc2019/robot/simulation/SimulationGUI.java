@@ -20,11 +20,16 @@ public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
     private VirtualBot robot;
     
     private JMenuBar menuBar = new JMenuBar();
-    private JMenu optionsMenu = new JMenu("Options"), subMenu = new JMenu("Team Settings"), 
+    
+    private JMenu optionsMenu = new JMenu("Options"), 
+            subMenu = new JMenu("Team Settings"), 
             viewMenu = new JMenu("View");
+    
     private JMenuItem robotPosition = new JMenuItem("Show Robot Position"),
-            robotType = new JMenuItem("Select Robot type"), teamNumber = new JMenuItem("Select Team Number"),
-            teamName = new JMenuItem("Set Team Name"), showFeild = new JMenuItem("Show Feild"),
+            robotType = new JMenuItem("Select Robot type"), 
+            teamNumber = new JMenuItem("Select Team Number"),
+            teamName = new JMenuItem("Set Team Name"), 
+            showFeild = new JMenuItem("Show Feild"),
             changeRobotSize = new JMenuItem("Change Robot Size"),
             simulationGridView = new JMenuItem("Simulation Grid View");
 
@@ -41,17 +46,21 @@ public class SimulationGUI extends JFrame implements ActionListener, SimUtils {
 
     private void initUI(VirtualBot inputRobot, boolean useKeyboard) {
         add(new SimulationViewDisplay(inputRobot, useKeyboard)); // add the main display
-        setTitle("Simulation GUI"); // set the title
-        Taskbar taskbar = Taskbar.getTaskbar(); // set the task bar to the system's task bar
-        try {taskbar.setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
-        } catch (final UnsupportedOperationException e) {} catch (final SecurityException e) {}
-        setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage()); // set the icon image
-        setSize(900, 600); // set the size of the display
-        createMenuItems(); // create the menu items
-        setJMenuBar(menuBar); // set the menu bar
+        setTitle("Simulation GUI");
+        if (SimulationOS.getOs() == "mac") {
+            Taskbar taskbar = Taskbar.getTaskbar();
+            try {taskbar.setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
+            } catch (final UnsupportedOperationException e) {} catch (final SecurityException e) { e.printStackTrace(); }
+        }
+        
+        setIconImage(new ImageIcon(getClass().getResource("drivetrain-img-dict/SimulationGUI.png")).getImage());
+        setSize(900, 600);
         setLocationRelativeTo(null);
         setBackground(Color.WHITE);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        createMenuItems();
+        setJMenuBar(menuBar);
     }
 
     private void createMenuItems() {

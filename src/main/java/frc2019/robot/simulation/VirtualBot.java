@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.swing.ImageIcon;
 import edu.wpi.first.wpilibj.Joystick;
-import frc2019.lib.NEOSmartMotor;
+import edu.wpi.first.wpilibj.XboxController;
+import frc2019.lib.SparkMAX;
 import frc2019.lib.VirtualMotor;
 
 
@@ -26,7 +27,9 @@ public class VirtualBot implements SimUtils {
     private int width, height, teamNumber;
     private double lastRotation, rotation = -90; // we set this so this is facing upwards
     private String drivetrain, teamName = "", robotName = "";
-    private double maximumSpeed, speed;
+    private double speed;
+
+    private InputHandler io;
 
     private ImageIcon icon;
     private Image image;
@@ -38,22 +41,33 @@ public class VirtualBot implements SimUtils {
      * @param teamNumber - This is your FRC team number, if you on't have one, just put in 0000.
      * @param driveType - This is a high demand, it is rewuired to make the robot work. It determines the drivetrain.
      */
-    public VirtualBot(final String robotName, final int teamNumber, final String driveType) {
+    public VirtualBot(String robotName, int teamNumber, String driveType) {
         setRobotName(robotName);
         setTeamNumber(teamNumber);
         setDrivetrain(driveType);
 
         // Vertigo: using SPARKS: 8 meters/second
         try {
-            motors.addMotor(new VirtualMotor("Virtual Motor 1", 1));
-            motors.addMotor(new VirtualMotor("Virtual Motor 2", 2));
-            motors.addMotor(new VirtualMotor("Virtual Motor 3", 3));
-            motors.addMotor(new VirtualMotor("Virtual Motor 4", 4));
+            motors.addMotor(new VirtualMotor("Virtual Motor 1", 1)); // top left
+            motors.addMotor(new VirtualMotor("Virtual Motor 2", 2)); // top right
+            motors.addMotor(new VirtualMotor("Virtual Motor 3", 3)); // bottom right
+            motors.addMotor(new VirtualMotor("Virtual Motor 4", 4)); // bottom left
 
-            System.out.println("Motor Arr size: " + motors.size());
-        } catch(NoSuchElementException e) {
-            e.printStackTrace();
-        }
+            System.out.println("Motor list size: " + motors.size());
+        } catch(NoSuchElementException e) { e.printStackTrace(); }
+    }
+
+    public VirtualBot(String robotName, int teamNumber, String driveType, Joystick joystick) {
+        new VirtualBot(robotName, teamNumber, driveType);
+
+        io = new InputHandler(joystick);
+        
+    }
+
+    public VirtualBot(String robotName, int teamNumber, String driveType, XboxController controller) {
+        new VirtualBot(robotName, teamNumber, driveType);
+
+        io = new InputHandler(controller);
     }
 
     private void loadImage() {
@@ -70,9 +84,7 @@ public class VirtualBot implements SimUtils {
         width = image.getWidth(null);
     }
     
-    public Image getImage() {
-        return image;
-    }
+    public Image getImage() { return image; }
 
     /**
      * Updates the Virtual Robot's position using 2 or 3 inputs.
@@ -126,38 +138,36 @@ public class VirtualBot implements SimUtils {
      * Returns the current angle in which the Virtual Robot is facing.
      * @return {@code double} the most recent rotation.
      */
-    public double getAngle() {
-        return rotation;
-    }
+    public double getAngle() { return rotation; }
     
-    public void setMaximumSpeed(final double newSpeed) {maximumSpeed = newSpeed;}
-    public void setSpeed(final int newSpeed) {speed = newSpeed;}
+    public void setSpeed(final int newSpeed) { speed = newSpeed; }
 
     /**
      * Returns the current x position of the Virtual Robot.
      * @return {@code double} X Position
      * @since v1
      */
-    public double getX() {return x;}
+    public double getX() { return x; }
     
     /**
      * Returns the current y position of the Virtual Robot.
      * @return {@code double} Y Position
      * @since v1
      */
-    public double getY() {return y;}
+    public double getY() { return y; }
     
-    public int getWidth() {return width;}
-    public int getHeight() {return height;}
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
 
     public void setDrivetrain(final String driveType) {
         drivetrain = driveType;
-        if (driveType.equals("d")) imageURL = getClass().getResource("drivetrain-img-dict/New/other.jpeg"); 
+        
+        if (drivetrain == "d") imageURL = getClass().getResource("drivetrain-img-dict/New/other.jpeg"); 
         else if (driveType == "t") imageURL = getClass().getResource("drivetrain-img-dict/New/tank.jpeg");
         else if (driveType == "m") imageURL = getClass().getResource("drivetrain-img-dict/New/mecanum.jpeg");
         else if (driveType == "2x2") imageURL = getClass().getResource("drivetrain-img-dict/New/2x2.jpeg"); 
         else {
-            System.out.println("Please choose a drive type. Your current one is none due to fallbacks.");
+            System.err.println("Please choose a drive type. Your current one is none due to fallbacks.");
             imageURL = getClass().getResource("drivetrain-img-dict/New/drivetrain.jpeg");
         }
         loadImage();
@@ -176,20 +186,59 @@ public class VirtualBot implements SimUtils {
         for (int m = 0; m <= (motors.size() - 1); m++) {
             if (motors.get(m) instanceof VirtualMotor) {
                 VirtualMotor motor = (VirtualMotor) motors.get(m);
-                if (motor.getPort() == 1 && motor.getMaximumAcceleration() > motor.get() || motor.getPort() == 3 && motor.getMaximumAcceleration() > motor.get()) {
-                    motor.set(motor.get() + input);
-                    System.out.println("Spinning Motor +: " + motor.getName() + ": " + motor.get());
+                System.out.println("Max motor acc: " + -motor.getMaximumAcceleration() + " " + motor.get() + " " + input);
+                String print = "Spinning Motors: ";
+
+                if (input < 0 && motor.get() == motor.getMaximumAcceleration()) {
+                    if (drivetrain == "2x2" || drivetrain == "d") {
+                        if (motor.getPort() == 1 || motor.getPort() == 3) {
+                            motor.set(motor.get() + input);
+                            print += "| [1,3] (+): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                        if (motor.getPort() == 2 || motor.getPort() == 4) {
+                            motor.set(motor.get() - input);
+                            print += "| [2,4] (-): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                    } else if (drivetrain == "t") {
+                        if (motor.getPort() == 1 || motor.getPort() == 2 || motor.getPort() == 3) {
+                            motor.set(motor.get() + input);
+                            print += "| [1,3] (+): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                        if (motor.getPort() == 4 || motor.getPort() == 5 || motor.getPort() == 6) {
+                            motor.set(motor.get() - input);
+                            print += "| [2,4] (-): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                    }
+                } else {
+                    if (drivetrain == "2x2" || drivetrain == "d") {
+                        if (motor.getPort() == 1 && motor.getMaximumAcceleration() > motor.get() || motor.getPort() == 3 && motor.getMaximumAcceleration() > motor.get()) {
+                            motor.set(motor.get() + input);
+                            print += "| [1,3] (+): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                        if (motor.getPort() == 2 && -motor.getMaximumAcceleration() < motor.get() || motor.getPort() == 4 && -motor.getMaximumAcceleration() < motor.get()) {
+                            motor.set(motor.get() - input);
+                            print += "| [2,4] (-): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                    } else if (drivetrain == "t") {
+                        if (motor.getPort() == 1 && motor.getMaximumAcceleration() > motor.get() || motor.getPort() == 2 && motor.getMaximumAcceleration() > motor.get() || motor.getPort() == 3 && motor.getMaximumAcceleration() > motor.get()) {
+                            motor.set(motor.get() + input);
+                            print += "| [1,3] (+): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                        if (motor.getPort() == 4 && -motor.getMaximumAcceleration() < motor.get() || motor.getPort() == 5 && -motor.getMaximumAcceleration() < motor.get() || motor.getPort() == 6 && -motor.getMaximumAcceleration() < motor.get()) {
+                            motor.set(motor.get() - input);
+                            print += "| [2,4] (-): "+motor.getName()+": "+motor.get()+" |";
+                        }
+                    }
+                        
                 }
-                if (motor.getPort() == 2 && -motor.getMaximumAcceleration() > motor.get() || motor.getPort() == 4 && -motor.getMaximumAcceleration() > motor.get()) {
-                    motor.set(motor.get() - input);
-                    System.out.println("Spinning Motor -: " + motor.getName() + ": " + motor.get());
-                }
-            } else if (motors.get(m) instanceof NEOSmartMotor) {
+                System.out.println(print);
+            } else if (motors.get(m) instanceof SparkMAX) {
                 // TODO: fill in here
             }
         }
     }
 
+    // Moving forward and Backwards
     public void verticallyTurnMotors(int input) {
         System.out.println(motors.size());
         for (int m = 0; m <= (motors.size() - 1); m++) {
@@ -199,19 +248,20 @@ public class VirtualBot implements SimUtils {
                     motor.set(motor.get() + input);
                     System.out.println("Spinning Motor: " + motor.getName() + ": " + motor.get());
                 }
-            } else if (motors.get(m) instanceof NEOSmartMotor) {
+            } else if (motors.get(m) instanceof SparkMAX) {
                 // TODO: fill in here
             }
         }
     }
 
+    // Self Explanitory, TODO: Implement NEO Smart Motors
     public Map getVMotorData() {
         Map tempMotorArr = new Hashtable();
         for (int m = 0; m <= (motors.size() - 1); m++) {
             if (motors.get(m) instanceof VirtualMotor) {
                 VirtualMotor motor = (VirtualMotor) motors.get(m);
                 tempMotorArr.put(motor.getName(), motor.getPort() + ", " + motor.get());
-            } else if (motors.get(m) instanceof NEOSmartMotor) {
+            } else if (motors.get(m) instanceof SparkMAX) {
                 // TODO: fill in here
             }
         }

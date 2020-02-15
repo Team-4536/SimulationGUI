@@ -12,10 +12,8 @@ def ROBOT_MAIN_CLASS = "frc2019.robot.Main"
 test {
     useJUnit()
     maxHeapSize = '1G'
-    testLogging {
-        // Show that tests are run in the command-line output
-        events 'started', 'passed'
-    }
+    // Show that tests are run in the command-line output
+    testLogging {events 'started', 'passed'}
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -62,7 +60,6 @@ dependencies {
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
 
-
     implementation wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
@@ -73,7 +70,7 @@ dependencies {
 
     // Enable simulation gui support. Must check the box in vscode to enable support
     // upon debugging
-    simulation wpi.deps.sim.gui(wpi.platforms.desktop, true)
+    simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

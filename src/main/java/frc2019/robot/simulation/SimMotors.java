@@ -3,7 +3,7 @@ package frc2019.robot.simulation;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import frc2019.lib.VirtualMotor;
-import frc2019.lib.NEOSmartMotor;
+import frc2019.lib.SparkMAX;
 import frc2019.lib.TestSimulationMotor;
 
 public class SimMotors {
@@ -27,11 +27,11 @@ public class SimMotors {
     }
 
     public void addMotor(VirtualMotor motor) { motors.add(motor); }
-    public void addMotor(NEOSmartMotor motor) { motors.add(motor); }
+    public void addMotor(SparkMAX motor) { motors.add(motor); }
     public void addMotor(TestSimulationMotor motor) { motors.add(motor); }
 
     public void addMotor(int CAN_id, VirtualMotor motor) { motors.add(CAN_id, motor); }
-    public void addMotor(int CAN_id, NEOSmartMotor motor) { motors.add(CAN_id, motor); }
+    public void addMotor(int CAN_id, SparkMAX motor) { motors.add(CAN_id, motor); }
     public void addMotor(int CAN_id, TestSimulationMotor motor) { motors.add(CAN_id, motor); }
 
     public void removeMotor(int CAN_id) {

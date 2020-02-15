@@ -10,95 +10,72 @@ public class SimulationOS implements SimUtils {
 
     /**
      * Creates a {@code SimulationOS} and a {@code SimulationGUI} object which can be retreived by {@code getSimulationInstance()}.
-     * @param os - The operating system name in which the simulation is going to be on. Current options are {@code windows} or {@code mac}.
+     * @param os The operating system name in which the simulation is going to be on. Current options are {@code windows} or {@code mac}.
      * @since v3
      * @see #getSimulationInstance()
      * @see #getOs()
      */
     public SimulationOS(String os) {
-        definiteOS = os;
-        if (os == "mac") {
-            initMacOS();
-        } else if (os == "windows") {
-            initWindows();
-        } else {
-            initMacOS(); // because it's probably linux
-        }
+        new SimulationOS(os, new VirtualBot("Test Robot", 0000, "d"));
     }
 
+    /**
+     * 
+     * @param os The operating system name in which the simulation is going to be on. Current options are {@code windows} or {@code mac}.
+     * @param inputBot The robot for {@code VirtualBot} to use
+     */
     public SimulationOS(String os, VirtualBot inputBot) {
-        definiteOS = os;
-        if (os == "mac") {
-            initMacOS(inputBot);
-        } else if (os == "windows") {
-            initWindows(inputBot);
-        } else {
-            initMacOS(inputBot);
+        switch (os) {
+            case "mac": initMacOS(inputBot);
+            case "windows": initWindows(inputBot);
+            default: initMacOS(inputBot);
         }
+        definiteOS = os;
     }
 
-    public SimulationOS(String os, VirtualBot inputBot, boolean useKeyboard) {
-        definiteOS = os;
-        if (os == "mac") {
-            initMacOS(inputBot, useKeyboard);
-        } else if (os == "windows") {
-            initWindows(inputBot, useKeyboard);
-        } else {
-            initMacOS(inputBot, useKeyboard);
-        }
-    }
-
+    /**
+     * 
+     * @param os The operating system name in which the simulation is going to be on. Current options are {@code windows} or {@code mac}.
+     * @param useKeyboard Weather to use the keyboard
+     */
     public SimulationOS(String os, boolean useKeyboard) {
-        VirtualBot defaultBot = new VirtualBot("Test Robot", 4536, "d");
+        VirtualBot defaultBot = new VirtualBot("Test Robot", 0000, "d");
         defaultBot.setSpeed(5);
-        definiteOS = os;
-        if (os == "mac") {
-            initMacOS(defaultBot, useKeyboard);
-        } else if (os == "windows") {
-            initWindows(defaultBot, useKeyboard);
-        } else {
-            initMacOS(defaultBot, useKeyboard);
+        new SimulationOS(os, defaultBot, useKeyboard);
+    }
+
+    /**
+     * 
+     * @param os
+     * @param inputBot
+     * @param useKeyboard
+     */
+    public SimulationOS(String os, VirtualBot inputBot, boolean useKeyboard) {
+        switch (os) {
+            case "mac": initMacOS(inputBot, useKeyboard);
+            case "windows": initWindows(inputBot, useKeyboard);
+            default: initMacOS(inputBot, useKeyboard);
         }
+        definiteOS = os;
     }
 
     /// Windows init functions
-    private void initWindows() {
-        VirtualBot defaultBot = new VirtualBot("Test Robot", 4536, "d");
-        defaultBot.setSpeed(5);
-        initWindows(defaultBot);
-    }
+    private void initWindows(VirtualBot inputBot) { initWindows(inputBot, false); }
+    private void initWindows(VirtualBot inputBot, boolean useKeyboard) { finalize(inputBot, useKeyboard); }
 
-    private void initWindows(VirtualBot inputBot) {
-        initWindows(inputBot, false);
-    }
-
-    private void initWindows(VirtualBot inputBot, boolean useKeyboard) {
-        EventQueue.invokeLater(() -> {
-			simulation = new SimulationGUI(inputBot, useKeyboard);
-			simulation.setVisible(true);
-		});
-    }
-
-
-    private void initMacOS() {
-        VirtualBot defaultBot = new VirtualBot("Test Robot", 4536, "d");
-        defaultBot.setSpeed(5);
-        initMacOS(defaultBot, false);
-    }
-
-    private void initMacOS(VirtualBot inputBot) {
-        initMacOS(inputBot, false);
-    }
-
+    private void initMacOS(VirtualBot inputBot) { initMacOS(inputBot, false); }
     private void initMacOS(VirtualBot inputBot, boolean useKeyboard) {
-        System.setProperty("apple.laf.useScreenMenuBar", macOSToolBarUsage);
-        System.setProperty("apple.awt.application.name", "SimulationGUI");
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+            System.setProperty("apple.laf.useScreenMenuBar", macOSToolBarUsage);
+            System.setProperty("apple.awt.application.name", "SimulationGUI");
+            try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); } 
+            catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) { e.printStackTrace(); }
+        } catch (Exception e) { e.printStackTrace(); }
 
+        finalize(inputBot, useKeyboard);
+    }
+
+    private void finalize(VirtualBot inputBot, boolean useKeyboard) {
         EventQueue.invokeLater(() -> {
 			simulation = new SimulationGUI(inputBot, useKeyboard);
 			simulation.setVisible(true);
@@ -110,16 +87,12 @@ public class SimulationOS implements SimUtils {
      * @return {@code String} the OS set.
      * @since v3
      */
-    public static String getOs() {
-        return definiteOS;
-    }
+    public static String getOs() { return definiteOS; }
 
     /**
      * Returns a SimulationGUI object.
      * @return SimulationGUI
      * @since v3
      */
-    public SimulationGUI getSimulationInstance() {
-        return simulation;
-    }
+    public SimulationGUI getSimulationInstance() { return simulation; }
 }

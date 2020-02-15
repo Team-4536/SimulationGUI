@@ -10,9 +10,6 @@ package frc2019.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj.Joystick;
-
-import frc2019.robot.simulation.SimulationOS;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,14 +20,6 @@ import frc2019.robot.simulation.SimulationOS;
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
 
-	Joystick joystick = new Joystick(0);
-	frc2019.robot.simulation.SimulationGUI simulation;
-  
-	private void simulationInit() {
-		SimulationOS simOS = new SimulationOS("mac"); // replace "mac" with "windows" for Windows 10
-		simulation = simOS.getSimulationInstance();
-	}
-
 	/**
 	 * This function is run when the robot is first started up and should be used for any
 	 * initialization code.
@@ -39,7 +28,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		// Instantiate our RobotContainer.  This will perform all our button bindings, and put our
 		// autonomous chooser on the dashboard.
-		// TODO init robot
+		new RobotContainer();
 	}
 
 	/**
@@ -96,7 +85,6 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
-		new SimulationOS("mac");
 	}
 
 	/**
@@ -120,7 +108,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public static void main(String...args) {
-		new SimulationOS("mac", true);
+		new RobotContainer();
 	}
 }
 
